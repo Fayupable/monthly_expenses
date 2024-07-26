@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbUpdateException extends Exception {
+    private static final String DEFAULT_MESSAGE = "Database update error";
+
     public DbUpdateException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbUpdateException(String message) {
@@ -14,6 +16,6 @@ public class DbUpdateException extends Exception {
     }
 
     public DbUpdateException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
 }

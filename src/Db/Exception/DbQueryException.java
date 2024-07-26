@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbQueryException extends Exception {
+    private static final String DEFAULT_MESSAGE = "An error occurred while querying the database.";
+
     public DbQueryException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbQueryException(String message) {
@@ -14,6 +16,7 @@ public class DbQueryException extends Exception {
     }
 
     public DbQueryException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+    
 }

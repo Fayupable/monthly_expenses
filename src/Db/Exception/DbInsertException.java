@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbInsertException extends Exception {
+    private static final String DEFAULT_MESSAGE = "Insert operation failed.";
+
     public DbInsertException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbInsertException(String message) {
@@ -14,6 +16,8 @@ public class DbInsertException extends Exception {
     }
 
     public DbInsertException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+
+
 }

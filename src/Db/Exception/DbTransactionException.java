@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbTransactionException extends Exception {
+    private static final String DEFAULT_MESSAGE = "An error occurred while performing a transaction on the database.";
+
     public DbTransactionException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbTransactionException(String message) {
@@ -14,6 +16,7 @@ public class DbTransactionException extends Exception {
     }
 
     public DbTransactionException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+
 }

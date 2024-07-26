@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbGetException extends Exception {
+    private static final String DEFAULT_MESSAGE = "Database get method error";
+
     public DbGetException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbGetException(String message) {
@@ -14,6 +16,7 @@ public class DbGetException extends Exception {
     }
 
     public DbGetException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+
 }

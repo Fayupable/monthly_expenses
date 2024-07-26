@@ -1,8 +1,9 @@
 package Db.Exception;
 
 public class DbConnectException extends Exception {
+    private static final String DEFAULT_MESSAGE = "Database connection error";
     public DbConnectException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbConnectException(String message) {
@@ -14,6 +15,6 @@ public class DbConnectException extends Exception {
     }
 
     public DbConnectException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
 }

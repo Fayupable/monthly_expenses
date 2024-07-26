@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbSelectException extends Exception {
+    private static final String DEFAULT_MESSAGE = "An error occurred while selecting from the database.";
+
     public DbSelectException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbSelectException(String message) {
@@ -14,6 +16,8 @@ public class DbSelectException extends Exception {
     }
 
     public DbSelectException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+
+
 }

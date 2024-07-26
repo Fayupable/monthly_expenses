@@ -1,8 +1,10 @@
 package Db.Exception;
 
 public class DbDeleteException extends Exception {
+    private static final String DEFAULT_MESSAGE = "Database delete error";
+
     public DbDeleteException() {
-        super();
+        super(DEFAULT_MESSAGE);
     }
 
     public DbDeleteException(String message) {
@@ -14,6 +16,7 @@ public class DbDeleteException extends Exception {
     }
 
     public DbDeleteException(Throwable cause) {
-        super(cause);
+        super(DEFAULT_MESSAGE, cause);
     }
+
 }

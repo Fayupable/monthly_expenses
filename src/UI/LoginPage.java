@@ -1,12 +1,30 @@
 package UI;
 
+import Db.DbFunction;
+import Db.Exception.DbConnectException;
+import Db.Tables.Persons;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+
+/**
+ * @author pc
+ */
 public class LoginPage extends javax.swing.JFrame {
+    private DbFunction dbFunction;
+    private Persons person;
 
     /**
      * Creates new form LoginPage
      */
     public LoginPage() {
         initComponents();
+        dbFunction = new DbFunction();
+        person = new Persons();
+        this.setResizable(false);
+
+
     }
 
     /**
@@ -24,8 +42,8 @@ public class LoginPage extends javax.swing.JFrame {
         lbl_e_mail = new javax.swing.JLabel();
         lbl_password = new javax.swing.JLabel();
         txtf_e_mail = new javax.swing.JTextField();
-        txtf_password = new javax.swing.JTextField();
         cbx_show = new javax.swing.JCheckBox();
+        pswrdf_password = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,10 +67,44 @@ public class LoginPage extends javax.swing.JFrame {
 
         lbl_password.setText("Password");
 
+        txtf_e_mail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtf_e_mailKeyPressed(evt);
+            }
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtf_e_mailKeyReleased(evt);
+            }
+
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtf_e_mailKeyTyped(evt);
+            }
+        });
+
         cbx_show.setText("Show");
         cbx_show.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbx_showActionPerformed(evt);
+            }
+        });
+
+        pswrdf_password.setText("Password");
+        pswrdf_password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pswrdf_passwordActionPerformed(evt);
+            }
+        });
+        pswrdf_password.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                pswrdf_passwordKeyPressed(evt);
+            }
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                pswrdf_passwordKeyReleased(evt);
+            }
+
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                pswrdf_passwordKeyTyped(evt);
             }
         });
 
@@ -72,11 +124,11 @@ public class LoginPage extends javax.swing.JFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(lbl_password, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(txtf_password, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(pswrdf_password))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(lbl_e_mail, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(txtf_e_mail)))
+                                                .addComponent(txtf_e_mail, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                                 .addComponent(cbx_show)
                                 .addGap(31, 31, 31))
@@ -91,8 +143,8 @@ public class LoginPage extends javax.swing.JFrame {
                                 .addGap(30, 30, 30)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(lbl_password, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtf_password, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(cbx_show))
+                                        .addComponent(cbx_show)
+                                        .addComponent(pswrdf_password, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(btn_sign_in, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -116,13 +168,63 @@ public class LoginPage extends javax.swing.JFrame {
 
     private void btn_sign_inActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        SignInPage signInPage = new SignInPage();
+        signInPage.setVisible(true);
+        this.dispose();
+
     }
+
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        person.setE_mail(txtf_e_mail.getText());
+        person.setPassword(pswrdf_password.getText());
+        try {
+            if (dbFunction.login(person)) {
+                JOptionPane.showMessageDialog(null, "Login Successful");
+            } else {
+                JOptionPane.showMessageDialog(null, "Login Failed.Try Again");
+            }
+        } catch (SQLException | DbConnectException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
 
     private void cbx_showActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        if (cbx_show.isSelected()) {
+            pswrdf_password.setEchoChar((char) 0);
+        } else {
+            pswrdf_password.setEchoChar('*');
+        }
+    }
+
+    private void pswrdf_passwordActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void pswrdf_passwordKeyPressed(java.awt.event.KeyEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void pswrdf_passwordKeyReleased(java.awt.event.KeyEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void pswrdf_passwordKeyTyped(java.awt.event.KeyEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void txtf_e_mailKeyPressed(java.awt.event.KeyEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void txtf_e_mailKeyReleased(java.awt.event.KeyEvent evt) {
+        // TODO add your handling code here:
+    }
+
+    private void txtf_e_mailKeyTyped(java.awt.event.KeyEvent evt) {
         // TODO add your handling code here:
     }
 
@@ -168,8 +270,7 @@ public class LoginPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lbl_e_mail;
     private javax.swing.JLabel lbl_password;
+    private javax.swing.JPasswordField pswrdf_password;
     private javax.swing.JTextField txtf_e_mail;
-    private javax.swing.JTextField txtf_password;
     // End of variables declaration
 }
-
