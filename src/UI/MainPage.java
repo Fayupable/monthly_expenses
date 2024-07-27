@@ -9,15 +9,18 @@ import Db.Tables.Expenses;
 import Db.Tables.Persons;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 
 public class MainPage extends javax.swing.JFrame {
 
     private Persons person;
     private DbFunction dbFunction;
     private Expenses expenses;
+    DefaultTableModel model;
 
     /**
      * Creates new form MainPage
@@ -27,6 +30,7 @@ public class MainPage extends javax.swing.JFrame {
         person = new Persons();
         dbFunction = new DbFunction();
         expenses = new Expenses();
+        this.model= new DefaultTableModel();
         txtf_expenses_date.setText(new Date(System.currentTimeMillis()).toString());
         set_payment_methods_combobox();
         set_categories_combobox();
@@ -59,6 +63,17 @@ public class MainPage extends javax.swing.JFrame {
         } else {
             throw new IllegalArgumentException("No category selected");
         }
+    }
+
+    private void getExpensesData() throws DbConnectException, SQLException {
+        dbFunction = new DbFunction();
+        List<Expenses> expensesList = dbFunction.getExpenses();
+        model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"Id", "Cost", "Amount", "Description", "Category", "Payment Method", "Date"});
+        for (Expenses expenses : expensesList) {
+            model.addRow(new Object[]{expenses.getId(), expenses.getCost(), expenses.getAmount(), expenses.getDescription(), expenses.getCategory_id(), expenses.getPayment_method_id(), expenses.getDate()});
+        }
+        tbl_expenses.setModel(model);
     }
 
     /**
@@ -723,6 +738,14 @@ public class MainPage extends javax.swing.JFrame {
 
     private void tbdp_dbStateChanged(javax.swing.event.ChangeEvent evt) {
         // TODO add your handling code here:
+        try {
+            getExpensesData();
+        } catch (DbConnectException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void tbdp_dbMouseClicked(java.awt.event.MouseEvent evt) {
@@ -844,7 +867,8 @@ public class MainPage extends javax.swing.JFrame {
     private void btn_expenses_addActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             // TODO add your handling code here:
-            int person_id = 1; // Sabit veya giriş yapan kullanıcının ID'si
+            // change the get person id (get a login funct with person id)
+            int person_id = 1;
             BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
             BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
             String description = txta_expenses_description.getText();
@@ -852,7 +876,7 @@ public class MainPage extends javax.swing.JFrame {
             int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
             Date date = Date.valueOf(txtf_expenses_date.getText());
 
-            // Expenses nesnesini oluştur
+            //create expense object
             Expenses expenses = new Expenses();
             expenses.setPerson_id(person_id);
             expenses.setCost(cost);
@@ -862,7 +886,7 @@ public class MainPage extends javax.swing.JFrame {
             expenses.setPayment_method_id(payment_method_id);
             expenses.setDate(date);
 
-            // Veritabanına ekle
+            //add sql
             dbFunction.insertExpense(expenses);
             JOptionPane.showMessageDialog(this, "Expense added successfully!");
 

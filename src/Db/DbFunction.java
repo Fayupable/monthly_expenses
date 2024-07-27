@@ -445,7 +445,44 @@ public class DbFunction implements IDbFunction {
 
     @Override
     public List<Expenses> getExpenses() throws DbConnectException, SQLException {
-        return List.of();
+        List<Expenses> expenses = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_expenses_query);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expenses.add(expense);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expenses;
     }
 
     @Override
