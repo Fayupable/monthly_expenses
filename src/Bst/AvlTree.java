@@ -242,47 +242,47 @@ public class AvlTree<T extends Comparable<T>> implements Tree<T> {
     }
 
 
-    public static void main(String[] args) {
-        // AVL ağacı işlemleri
-        AvlTree<Integer> avlTree = new AvlTree<>();
-        avlTree.insert(10);
-        avlTree.insert(20);
-        avlTree.insert(30);
-        avlTree.insert(40);
-        avlTree.insert(50);
-        avlTree.insert(25);
-        //add random 20 number with foreach loop
-        for (int i = 0; i < 20; i++) {
-            avlTree.insert((int) (Math.random() * 100));
-        }
-        System.out.println("Printing AVL tree");
-        avlTree.print();
-        avlTree.preorder();
-
-//        System.out.println("Inorder traversal of constructed AVL tree is: ");
-//        avlTree.inorder();
+//    public static void main(String[] args) {
+//        // AVL ağacı işlemleri
+//        AvlTree<Integer> avlTree = new AvlTree<>();
+//        avlTree.insert(10);
+//        avlTree.insert(20);
+//        avlTree.insert(30);
+//        avlTree.insert(40);
+//        avlTree.insert(50);
+//        avlTree.insert(25);
+//        //add random 20 number with foreach loop
+//        for (int i = 0; i < 20; i++) {
+//            avlTree.insert((int) (Math.random() * 100));
+//        }
+//        System.out.println("Printing AVL tree");
+//        avlTree.print();
+//        avlTree.preorder();
 //
-//        System.out.println("\nDeleting 30");
-//        avlTree.delete(30);
-//        System.out.println("Inorder traversal after deletion of 30: ");
-//        avlTree.inorder();
-//
-//        // LinkedList işlemleri
-//        LinkedList<Integer> linkedList = new LinkedList<>();
-//        linkedList.insert(1);
-//        linkedList.insert(2);
-//        linkedList.insert(3);
-//        linkedList.insert(4);
-//
-//        System.out.println("Printing linked list");
-//        linkedList.print();
-//
-//        System.out.println("Printing linked list in reverse");
-//        linkedList.printReverse();
-//        linkedList.delete(3);
-//        System.out.println("Printing linked list after deleting 3");
-//        linkedList.print();
-//
-//
-    }
+////        System.out.println("Inorder traversal of constructed AVL tree is: ");
+////        avlTree.inorder();
+////
+////        System.out.println("\nDeleting 30");
+////        avlTree.delete(30);
+////        System.out.println("Inorder traversal after deletion of 30: ");
+////        avlTree.inorder();
+////
+////        // LinkedList işlemleri
+////        LinkedList<Integer> linkedList = new LinkedList<>();
+////        linkedList.insert(1);
+////        linkedList.insert(2);
+////        linkedList.insert(3);
+////        linkedList.insert(4);
+////
+////        System.out.println("Printing linked list");
+////        linkedList.print();
+////
+////        System.out.println("Printing linked list in reverse");
+////        linkedList.printReverse();
+////        linkedList.delete(3);
+////        System.out.println("Printing linked list after deleting 3");
+////        linkedList.print();
+////
+////
+//    }
 }

@@ -2,6 +2,7 @@ package Db;
 
 import Db.Exception.*;
 import Db.Tables.Categories;
+import Db.Tables.Expenses;
 import Db.Tables.PaymentMethods;
 import Db.Tables.Persons;
 
@@ -25,6 +26,12 @@ public interface IDbFunction {
 
 
     //Expenses
+    void insertExpense(Expenses expenses) throws DbConnectException, SQLException;
+    void updateExpense(Expenses expenses) throws DbConnectException, SQLException;
+    void deleteExpense(Expenses expenses) throws DbConnectException, SQLException;
+    List<Expenses> getExpenses() throws DbConnectException, SQLException;
+    List<Expenses> searchExpenses(String search) throws DbConnectException, SQLException;
+
 
 
 

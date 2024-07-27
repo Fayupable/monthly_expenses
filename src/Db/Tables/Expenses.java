@@ -7,6 +7,7 @@ public class Expenses {
     private int id;
     private int person_id;
     private BigDecimal amount;
+    private BigDecimal cost;
     private String description;
     private int category_id;
     private int payment_method_id;
@@ -15,9 +16,10 @@ public class Expenses {
     public Expenses() {
     }
 
-    public Expenses(int person_id, BigDecimal amount, String description, int category_id, int payment_method_id, Date date) {
+    public Expenses(int person_id, BigDecimal amount, BigDecimal cost, String description, int category_id, int payment_method_id, Date date) {
         this.person_id = person_id;
         this.amount = amount;
+        this.cost = cost;
         this.description = description;
         this.category_id = category_id;
         this.payment_method_id = payment_method_id;
@@ -38,6 +40,14 @@ public class Expenses {
 
     public void setPerson_id(int person_id) {
         this.person_id = person_id;
+    }
+
+    public BigDecimal getCost() {
+        return cost;
+    }
+
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
     }
 
     public BigDecimal getAmount() {
@@ -86,6 +96,7 @@ public class Expenses {
                 "id=" + id +
                 ", person_id=" + person_id +
                 ", amount=" + amount +
+                ", cost=" + cost +
                 ", description='" + description + '\'' +
                 ", category_id=" + category_id +
                 ", payment_method_id=" + payment_method_id +

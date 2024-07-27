@@ -3,13 +3,11 @@ package Db;
 import Db.Enum.EPaymentMethods;
 import Db.Exception.*;
 import Db.Tables.Categories;
+import Db.Tables.Expenses;
 import Db.Tables.PaymentMethods;
 import Db.Tables.Persons;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +40,12 @@ public class DbFunction implements IDbFunction {
 
 
     //Expenses
+    private static final String insert_expense_query = "INSERT INTO expenses (person_id, cost, amount, description, category_id, payment_method_id,date) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String update_expense_query = "UPDATE expenses SET person_id = ?, cost = ?, amount = ?, description = ?, category_id = ?, payment_method_id = ?, date = ? WHERE id = ?";
+    private static final String delete_expense_query = "DELETE FROM expenses WHERE id = ?";
+    private static final String get_expenses_query = "SELECT * FROM expenses";
+    private static final String search_expenses_query = "SELECT * FROM expenses WHERE description LIKE ?";
+
 
     //Expenses Details
 
@@ -86,7 +90,8 @@ public class DbFunction implements IDbFunction {
         }
         return false;
     }
-//Persons
+
+    //Persons
     @Override
     public void insertPerson(Persons person) throws DbConnectException, SQLException {
         conn = DbConnector.getConnection();
@@ -257,7 +262,7 @@ public class DbFunction implements IDbFunction {
         return paymentMethods;
     }
 
-//Categories
+    //Categories
     @Override
     public void insertCategory(Categories categories) throws DbConnectException, DbInsertException, SQLException {
         conn = DbConnector.getConnection();
@@ -398,5 +403,53 @@ public class DbFunction implements IDbFunction {
             }
         }
         return categories;
+    }
+
+    @Override
+    public void insertExpense(Expenses expenses) throws DbConnectException, SQLException {
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(insert_expense_query);
+        ps.setInt(1, expenses.getPerson_id());
+        ps.setBigDecimal(2, expenses.getCost());
+        ps.setBigDecimal(3, expenses.getAmount());
+        ps.setString(4, expenses.getDescription());
+        ps.setInt(5, expenses.getCategory_id());
+        ps.setInt(6, expenses.getPayment_method_id());
+        ps.setDate(7, (Date) expenses.getDate());
+        ps.executeUpdate();
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void updateExpense(Expenses expenses) throws DbConnectException, SQLException {
+
+    }
+
+    @Override
+    public void deleteExpense(Expenses expenses) throws DbConnectException, SQLException {
+
+    }
+
+    @Override
+    public List<Expenses> getExpenses() throws DbConnectException, SQLException {
+        return List.of();
+    }
+
+    @Override
+    public List<Expenses> searchExpenses(String search) throws DbConnectException, SQLException {
+        return List.of();
     }
 }

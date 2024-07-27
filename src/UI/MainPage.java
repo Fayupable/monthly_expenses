@@ -1,13 +1,64 @@
 package UI;
 
 
+import Db.DbFunction;
+import Db.Enum.ECategoryType;
+import Db.Enum.EPaymentMethods;
+import Db.Exception.DbConnectException;
+import Db.Tables.Expenses;
+import Db.Tables.Persons;
+
+import javax.swing.*;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.SQLException;
+
 public class MainPage extends javax.swing.JFrame {
+
+    private Persons person;
+    private DbFunction dbFunction;
+    private Expenses expenses;
 
     /**
      * Creates new form MainPage
      */
     public MainPage() {
         initComponents();
+        person = new Persons();
+        dbFunction = new DbFunction();
+        expenses = new Expenses();
+        txtf_expenses_date.setText(new Date(System.currentTimeMillis()).toString());
+        set_payment_methods_combobox();
+        set_categories_combobox();
+
+    }
+
+    private void set_payment_methods_combobox() {
+        cmbx_expenses_payment_methods.removeAllItems();
+        for (EPaymentMethods paymentMethod : EPaymentMethods.values()) {
+            cmbx_expenses_payment_methods.addItem(paymentMethod.getDisplayName());
+        }
+    }
+
+    private void set_categories_combobox() {
+        cmbx_expenses_category.removeAllItems();
+        try {
+            dbFunction.getCategories().forEach(category -> {
+                cmbx_expenses_category.addItem(category.getName());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getSelectedCategoryId() {
+        String selectedCategory = (String) cmbx_expenses_category.getSelectedItem();
+        if (selectedCategory != null) {
+            ECategoryType categoryType = ECategoryType.valueOf(selectedCategory);
+            return categoryType.getId();
+        } else {
+            throw new IllegalArgumentException("No category selected");
+        }
     }
 
     /**
@@ -791,7 +842,36 @@ public class MainPage extends javax.swing.JFrame {
     }
 
     private void btn_expenses_addActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            int person_id = 1; // Sabit veya giriş yapan kullanıcının ID'si
+            BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
+            BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
+            String description = txta_expenses_description.getText();
+            int category_id = getSelectedCategoryId();
+            int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
+            Date date = Date.valueOf(txtf_expenses_date.getText());
+
+            // Expenses nesnesini oluştur
+            Expenses expenses = new Expenses();
+            expenses.setPerson_id(person_id);
+            expenses.setCost(cost);
+            expenses.setAmount(amount);
+            expenses.setDescription(description);
+            expenses.setCategory_id(category_id);
+            expenses.setPayment_method_id(payment_method_id);
+            expenses.setDate(date);
+
+            // Veritabanına ekle
+            dbFunction.insertExpense(expenses);
+            JOptionPane.showMessageDialog(this, "Expense added successfully!");
+
+        } catch (DbConnectException | SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to add expense: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void btn_expenses_updateActionPerformed(java.awt.event.ActionEvent evt) {
@@ -808,6 +888,7 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_addMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+
     }
 
     private void btn_expenses_updateMouseEntered(java.awt.event.MouseEvent evt) {
