@@ -10,14 +10,16 @@ import Db.Tables.Persons;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MainPage extends javax.swing.JFrame {
 
-    private Persons person;
+    private Persons loggedInUser;
     private DbFunction dbFunction;
     private Expenses expenses;
     DefaultTableModel model;
@@ -27,14 +29,37 @@ public class MainPage extends javax.swing.JFrame {
      */
     public MainPage() {
         initComponents();
-        person = new Persons();
+        loggedInUser = new Persons();
         dbFunction = new DbFunction();
         expenses = new Expenses();
-        this.model= new DefaultTableModel();
+        this.model = new DefaultTableModel();
         txtf_expenses_date.setText(new Date(System.currentTimeMillis()).toString());
         set_payment_methods_combobox();
         set_categories_combobox();
 
+    }
+
+    public MainPage(Persons loggedInUser) {
+        this.loggedInUser = loggedInUser;
+        dbFunction = new DbFunction();
+        initComponents();
+
+        expenses = new Expenses();
+        this.model = new DefaultTableModel();
+        txtf_expenses_date.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis())));
+
+        lbl_name.setText(loggedInUser.getName());
+        lbl_name.setSize(77, 17);
+        lbl_surname.setText("");
+        txtf_expenses_id.setEditable(false);
+        txtf_expenses_id.setBackground(Color.lightGray);
+        set_payment_methods_combobox();
+        set_categories_combobox();
+
+    }
+
+    private Persons getLoggedInUser() {
+        return loggedInUser;
     }
 
     private void set_payment_methods_combobox() {
@@ -67,7 +92,8 @@ public class MainPage extends javax.swing.JFrame {
 
     private void getExpensesData() throws DbConnectException, SQLException {
         dbFunction = new DbFunction();
-        List<Expenses> expensesList = dbFunction.getExpenses();
+        int userId = loggedInUser.getId();
+        List<Expenses> expensesList = dbFunction.getExpensesByPersonId(userId);
         model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Id", "Cost", "Amount", "Description", "Category", "Payment Method", "Date"});
         for (Expenses expenses : expensesList) {
@@ -116,6 +142,7 @@ public class MainPage extends javax.swing.JFrame {
         rbtn_expenses_date = new javax.swing.JRadioButton();
         btn_expenses_search = new javax.swing.JButton();
         btn_expenses_delete = new javax.swing.JButton();
+        btn_expenses_clear = new javax.swing.JButton();
         pnl_expenses_detail = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_expenses_detail = new javax.swing.JTable();
@@ -151,11 +178,9 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseExited(evt);
             }
@@ -165,24 +190,22 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseExited(evt);
             }
         });
 
         tbl_expenses.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
                         {},
                         {},
                         {},
                         {}
                 },
-                new String[]{
+                new String [] {
 
                 }
         ));
@@ -211,9 +234,9 @@ public class MainPage extends javax.swing.JFrame {
         txta_expenses_description.setRows(5);
         jScrollPane5.setViewportView(txta_expenses_description);
 
-        cmbx_expenses_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
+        cmbx_expenses_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        cmbx_expenses_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
+        cmbx_expenses_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btn_expenses_add.setBackground(new java.awt.Color(98, 194, 242));
         btn_expenses_add.setText("Add");
@@ -221,7 +244,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_addMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_addMouseExited(evt);
             }
@@ -238,7 +260,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_updateMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_updateMouseExited(evt);
             }
@@ -288,7 +309,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_deleteMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_deleteMouseExited(evt);
             }
@@ -296,6 +316,22 @@ public class MainPage extends javax.swing.JFrame {
         btn_expenses_delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_expenses_deleteActionPerformed(evt);
+            }
+        });
+
+        btn_expenses_clear.setBackground(new java.awt.Color(204, 204, 204));
+        btn_expenses_clear.setText("Clear");
+        btn_expenses_clear.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn_expenses_clearMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn_expenses_clearMouseExited(evt);
+            }
+        });
+        btn_expenses_clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_expenses_clearActionPerformed(evt);
             }
         });
 
@@ -355,6 +391,8 @@ public class MainPage extends javax.swing.JFrame {
                                 .addComponent(btn_expenses_update, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btn_expenses_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_expenses_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnl_expensesLayout.setVerticalGroup(
@@ -374,7 +412,8 @@ public class MainPage extends javax.swing.JFrame {
                                 .addGroup(pnl_expensesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(btn_expenses_add, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(btn_expenses_update, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btn_expenses_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(btn_expenses_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btn_expenses_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(26, 26, 26))
                         .addGroup(pnl_expensesLayout.createSequentialGroup()
                                 .addContainerGap()
@@ -417,24 +456,22 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_expenses_detailMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_expenses_detailMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_expenses_detailMouseExited(evt);
             }
         });
 
         tbl_expenses_detail.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
                         {},
                         {},
                         {},
                         {}
                 },
-                new String[]{
+                new String [] {
 
                 }
         ));
@@ -466,24 +503,22 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseExited(evt);
             }
         });
 
         tbl_expenses_categories.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
                         {},
                         {},
                         {},
                         {}
                 },
-                new String[]{
+                new String [] {
 
                 }
         ));
@@ -515,24 +550,22 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseEntered(evt);
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseExited(evt);
             }
         });
 
         tbl_payment_methods.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
+                new Object [][] {
                         {},
                         {},
                         {},
                         {}
                 },
-                new String[]{
+                new String [] {
 
                 }
         ));
@@ -570,8 +603,8 @@ public class MainPage extends javax.swing.JFrame {
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(lbl_name, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addComponent(lbl_name, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbl_surname, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGroup(jPanel2Layout.createSequentialGroup()
@@ -582,9 +615,9 @@ public class MainPage extends javax.swing.JFrame {
                 jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(8, 8, 8)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbl_name)
-                                        .addComponent(lbl_surname))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lbl_surname)
+                                        .addComponent(lbl_name, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(tbdp_db)
                                 .addContainerGap())
@@ -647,7 +680,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_editMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_editMouseEntered(evt);
             }
@@ -671,7 +703,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_categoriesMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_categoriesMouseEntered(evt);
             }
@@ -683,7 +714,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_expenses_detailMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_expenses_detailMouseEntered(evt);
             }
@@ -695,7 +725,6 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_payment_methodsMouseClicked(evt);
             }
-
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_payment_methodsMouseEntered(evt);
             }
@@ -738,14 +767,16 @@ public class MainPage extends javax.swing.JFrame {
 
     private void tbdp_dbStateChanged(javax.swing.event.ChangeEvent evt) {
         // TODO add your handling code here:
-        try {
-            getExpensesData();
-        } catch (DbConnectException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        JTabbedPane sourceTabbedPane = (JTabbedPane) evt.getSource();
+        int selectedIndex = sourceTabbedPane.getSelectedIndex();
+        String tabTitle = sourceTabbedPane.getTitleAt(selectedIndex);
+        if (tabTitle.equals("Expenses")) {
+            try {
+                getExpensesData();
+            } catch (DbConnectException | SQLException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     private void tbdp_dbMouseClicked(java.awt.event.MouseEvent evt) {
@@ -754,6 +785,7 @@ public class MainPage extends javax.swing.JFrame {
 
     private void pnl_expensesMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+
     }
 
     private void tbdp_dbMouseEntered(java.awt.event.MouseEvent evt) {
@@ -810,6 +842,16 @@ public class MainPage extends javax.swing.JFrame {
 
     private void tbl_expensesMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        int selectedIndex = tbl_expenses.getSelectedRow();
+        if (selectedIndex != -1) {
+            txtf_expenses_id.setText(tbl_expenses.getValueAt(selectedIndex, 0).toString());
+            txtf_expenses_cost.setText(tbl_expenses.getValueAt(selectedIndex, 1).toString());
+            txtf_expenses_amount.setText(tbl_expenses.getValueAt(selectedIndex, 2).toString());
+            txta_expenses_description.setText(tbl_expenses.getValueAt(selectedIndex, 3).toString());
+            cmbx_expenses_category.setSelectedIndex((int) tbl_expenses.getValueAt(selectedIndex, 4) - 1);
+            cmbx_expenses_payment_methods.setSelectedIndex((int) tbl_expenses.getValueAt(selectedIndex, 5) - 1);
+            txtf_expenses_date.setText(tbl_expenses.getValueAt(selectedIndex, 6).toString());
+        }
     }
 
     private void tbl_expenses_detailMouseClicked(java.awt.event.MouseEvent evt) {
@@ -868,7 +910,7 @@ public class MainPage extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             // change the get person id (get a login funct with person id)
-            int person_id = 1;
+            int loggedInUserId = loggedInUser.getId();
             BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
             BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
             String description = txta_expenses_description.getText();
@@ -876,9 +918,10 @@ public class MainPage extends javax.swing.JFrame {
             int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
             Date date = Date.valueOf(txtf_expenses_date.getText());
 
+
             //create expense object
             Expenses expenses = new Expenses();
-            expenses.setPerson_id(person_id);
+            expenses.setPerson_id(loggedInUserId);
             expenses.setCost(cost);
             expenses.setAmount(amount);
             expenses.setDescription(description);
@@ -889,6 +932,7 @@ public class MainPage extends javax.swing.JFrame {
             //add sql
             dbFunction.insertExpense(expenses);
             JOptionPane.showMessageDialog(this, "Expense added successfully!");
+            getExpensesData();
 
         } catch (DbConnectException | SQLException e) {
             e.printStackTrace();
@@ -900,36 +944,112 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_updateActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        try {
+            // change the get person id (get a login funct with person id)
+            int id = Integer.parseInt(txtf_expenses_id.getText());
+            BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
+            BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
+            String description = txta_expenses_description.getText();
+            int category_id = getSelectedCategoryId();
+            int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
+            Date date = Date.valueOf(txtf_expenses_date.getText());
+
+            //create expense object
+            Expenses expenses = new Expenses();
+            expenses.setId(id);
+            expenses.setPerson_id(loggedInUser.getId());
+            expenses.setCost(cost);
+            expenses.setAmount(amount);
+            expenses.setDescription(description);
+            expenses.setCategory_id(category_id);
+            expenses.setPayment_method_id(payment_method_id);
+            expenses.setDate(date);
+
+            //add sql
+            dbFunction.updateExpense(expenses);
+            JOptionPane.showMessageDialog(this, "Expense updated successfully!");
+
+        } catch (DbConnectException | SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to update expense: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void btn_expenses_deleteActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        try {
+            int expenseId = Integer.parseInt(txtf_expenses_id.getText());
+            Expenses expenses = new Expenses();
+            expenses.setId(expenseId);
+
+            dbFunction.deleteExpense(expenses);
+            JOptionPane.showMessageDialog(this, "Expense deleted successfully!");
+        } catch (DbConnectException | SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to delete expense: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void btn_expenses_addMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        btn_expenses_add.setBackground(new Color(12, 93, 166));
     }
 
     private void btn_expenses_addMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        btn_expenses_add.setBackground(new Color(98,194,242));
 
     }
 
     private void btn_expenses_updateMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        btn_expenses_update.setBackground(new Color(228, 120, 241));
     }
 
     private void btn_expenses_updateMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+     btn_expenses_update.setBackground(new Color(226,165,165));
     }
 
     private void btn_expenses_deleteMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        btn_expenses_delete.setBackground(new Color(92, 0, 0));
     }
 
     private void btn_expenses_deleteMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        btn_expenses_delete.setBackground(new Color(246, 26, 70));
     }
+    private void btn_expenses_clearActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        btn_expenses_clear.setBackground(new Color(99, 99, 99));
+        tbl_expenses.clearSelection();
+        txtf_expenses_id.setText("");
+        txtf_expenses_cost.setText("");
+        txtf_expenses_amount.setText("");
+        txta_expenses_description.setText("");
+        cmbx_expenses_category.setSelectedIndex(0);
+        cmbx_expenses_payment_methods.setSelectedIndex(0);
+        //dd/MM/yyyy
+        txtf_expenses_date.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date(System.currentTimeMillis())));
+    }
+
+    private void btn_expenses_clearMouseEntered(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        btn_expenses_clear.setBackground(new Color(165, 163, 163));
+
+    }
+
+    private void btn_expenses_clearMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        btn_expenses_clear.setBackground(new Color(204, 204, 204));
+    }
+
+
 
     private void btn_expenses_searchActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -984,6 +1104,7 @@ public class MainPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify
     private javax.swing.JButton btn_expenses_add;
+    private javax.swing.JButton btn_expenses_clear;
     private javax.swing.JButton btn_expenses_delete;
     private javax.swing.JButton btn_expenses_search;
     private javax.swing.JButton btn_expenses_update;

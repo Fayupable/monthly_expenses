@@ -1,6 +1,7 @@
 package Db.Tables;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Expenses {
@@ -88,6 +89,7 @@ public class Expenses {
 
     public void setDate(Date date) {
         this.date = date;
+
     }
 
     @Override

@@ -23,6 +23,8 @@ public class LoginPage extends javax.swing.JFrame {
         dbFunction = new DbFunction();
         person = new Persons();
         this.setResizable(false);
+        txtf_e_mail.setText("enisyaman4@gmail.com");
+        pswrdf_password.setText("1");
 
 
     }
@@ -180,8 +182,15 @@ public class LoginPage extends javax.swing.JFrame {
         person.setE_mail(txtf_e_mail.getText());
         person.setPassword(pswrdf_password.getText());
         try {
-            if (dbFunction.login(person)) {
+            int personId = dbFunction.login(person);
+            if (personId != 0) {
                 JOptionPane.showMessageDialog(null, "Login Successful");
+                this.person = dbFunction.getPersonsById(person.getId());
+                MainPage mainPage = new MainPage(this.person);
+                mainPage.setVisible(true);
+                this.dispose();
+
+
             } else {
                 JOptionPane.showMessageDialog(null, "Login Failed.Try Again");
             }

@@ -11,8 +11,9 @@ import java.util.List;
 
 public interface IDbFunction {
     //Persons
-    boolean login(Persons person) throws DbConnectException, SQLException;
+    int login(Persons person) throws DbConnectException, SQLException;
     void insertPerson(Persons person) throws DbConnectException, SQLException;
+    Persons getPersonsById(int id) throws DbConnectException, SQLException;
 
 
 
@@ -31,6 +32,7 @@ public interface IDbFunction {
     void deleteExpense(Expenses expenses) throws DbConnectException, SQLException;
     List<Expenses> getExpenses() throws DbConnectException, SQLException;
     List<Expenses> searchExpenses(String search) throws DbConnectException, SQLException;
+    List<Expenses> getExpensesByPersonId(int personId) throws DbConnectException, SQLException;
 
 
 

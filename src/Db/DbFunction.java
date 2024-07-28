@@ -1,6 +1,7 @@
 package Db;
 
 import Db.Enum.EPaymentMethods;
+import Db.Enum.EPersonType;
 import Db.Exception.*;
 import Db.Tables.Categories;
 import Db.Tables.Expenses;
@@ -22,6 +23,7 @@ public class DbFunction implements IDbFunction {
 
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
+    private static final String get_persons_by_id_query = "SELECT * FROM persons WHERE id = ?";
 
     //Payment Methods
     private static final String insert_payment_method_query = "INSERT INTO payment_methods (name) VALUES (?)";
@@ -44,26 +46,35 @@ public class DbFunction implements IDbFunction {
     private static final String update_expense_query = "UPDATE expenses SET person_id = ?, cost = ?, amount = ?, description = ?, category_id = ?, payment_method_id = ?, date = ? WHERE id = ?";
     private static final String delete_expense_query = "DELETE FROM expenses WHERE id = ?";
     private static final String get_expenses_query = "SELECT * FROM expenses";
-    private static final String search_expenses_query = "SELECT * FROM expenses WHERE description LIKE ?";
+    private static final String get_expenses_by_person_id_query = "SELECT * FROM expenses WHERE person_id = ?";
+    //all expenses variables
+    private static final String search_expenses_query = "SELECT * FROM expenses WHERE description LIKE ?, cost LIKE ?, amount LIKE ?, date LIKE ?, category_id LIKE ?, payment_method_id LIKE ?";
 
 
     //Expenses Details
 
     @Override
-    public boolean login(Persons person) throws DbConnectException, SQLException {
+    public int login(Persons person) throws DbConnectException, SQLException {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             conn = DbConnector.getConnection();
+            String login_query = "SELECT id, name, e_mail, password, person_type, created_at FROM persons WHERE e_mail = ? AND password = ?";
             ps = conn.prepareStatement(login_query);
             ps.setString(1, person.getE_mail());
             ps.setString(2, person.getPassword());
             rs = ps.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt(1) > 0;
+                person.setId(rs.getInt("id"));
+                person.setName(rs.getString("name"));
+                person.setE_mail(rs.getString("e_mail"));
+                person.setPassword(rs.getString("password"));
+                person.setPerson_type(EPersonType.valueOf(rs.getString("person_type")));
+                person.setCreated_at(rs.getTimestamp("created_at"));
+                return person.getId();
             }
         } finally {
             if (rs != null) {
@@ -88,7 +99,7 @@ public class DbFunction implements IDbFunction {
                 }
             }
         }
-        return false;
+        return -1;
     }
 
     //Persons
@@ -118,6 +129,45 @@ public class DbFunction implements IDbFunction {
         }
     }
 
+    @Override
+    public Persons getPersonsById(int id) throws DbConnectException, SQLException {
+        Persons person = new Persons();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_persons_by_id_query);
+        ps.setInt(1, id);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            person.setId(rs.getInt("id"));
+            person.setName(rs.getString("name"));
+            person.setE_mail(rs.getString("e_mail"));
+            person.setPassword(rs.getString("password"));
+            person.setPerson_type(EPersonType.valueOf(rs.getString("person_type")));
+            person.setCreated_at(rs.getTimestamp("created_at"));
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return person;
+
+    }
 
     @Override
     public void insertPaymentMethod(PaymentMethods paymentMethods) throws DbConnectException, SQLException {
@@ -435,12 +485,53 @@ public class DbFunction implements IDbFunction {
 
     @Override
     public void updateExpense(Expenses expenses) throws DbConnectException, SQLException {
-
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(update_expense_query);
+        ps.setInt(1, expenses.getPerson_id());
+        ps.setBigDecimal(2, expenses.getCost());
+        ps.setBigDecimal(3, expenses.getAmount());
+        ps.setString(4, expenses.getDescription());
+        ps.setInt(5, expenses.getCategory_id());
+        ps.setInt(6, expenses.getPayment_method_id());
+        ps.setDate(7, (Date) expenses.getDate());
+        ps.setInt(8, expenses.getId());
+        ps.executeUpdate();
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void deleteExpense(Expenses expenses) throws DbConnectException, SQLException {
-
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(delete_expense_query);
+        ps.setInt(1, expenses.getId());
+        ps.executeUpdate();
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -486,7 +577,91 @@ public class DbFunction implements IDbFunction {
     }
 
     @Override
+    public List<Expenses> getExpensesByPersonId(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expenses = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_expenses_by_person_id_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expenses.add(expense);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expenses;
+
+
+    }
+
+    @Override
     public List<Expenses> searchExpenses(String search) throws DbConnectException, SQLException {
-        return List.of();
+        List<Expenses> expenses = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(search_expenses_query);
+        ps.setString(1, "%" + search + "%");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expenses.add(expense);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expenses;
+
     }
 }
