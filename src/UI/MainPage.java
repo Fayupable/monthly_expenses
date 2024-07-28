@@ -5,10 +5,7 @@ import Db.DbFunction;
 import Db.Enum.ECategoryType;
 import Db.Enum.EPaymentMethods;
 import Db.Exception.DbConnectException;
-import Db.Tables.Categories;
-import Db.Tables.Expenses;
-import Db.Tables.PaymentMethods;
-import Db.Tables.Persons;
+import Db.Tables.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -151,6 +148,19 @@ public class MainPage extends javax.swing.JFrame {
             }
 
             tbl_payment_methods.setModel(model);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void getExpensesDetailsData(){
+        try {
+            List<ExpensesDetails> expensesDetailsList = dbFunction.getExpenseDetails();
+            model = new DefaultTableModel();
+            model.setColumnIdentifiers(new Object[]{"Id", "Expense Id", "Item", "Cost", "Amount"});
+            for (ExpensesDetails expensesDetails : expensesDetailsList) {
+                model.addRow(new Object[]{expensesDetails.getId(), expensesDetails.getExpense_id(), expensesDetails.getItem(), expensesDetails.getCost(), expensesDetails.getAmount()});
+            }
+            tbl_expenses_detail.setModel(model);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -923,6 +933,12 @@ public class MainPage extends javax.swing.JFrame {
             getCategoriesData();
         }else if(tabTitle.equals("Payment Methods")){
             getPaymentMethodsData();
+        } else if (tabTitle.equals("Expenses Detail")) {
+            try {
+                getExpensesDetailsData();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
         }
     }

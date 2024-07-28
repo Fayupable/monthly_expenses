@@ -7,14 +7,16 @@ public class ExpensesDetails {
     private int expense_id;
     private String item;
     private BigDecimal cost;
+    private BigDecimal amount;
 
     public ExpensesDetails() {
     }
 
-    public ExpensesDetails(int expense_id, String item, BigDecimal cost) {
+    public ExpensesDetails(int expense_id, String item, BigDecimal cost, BigDecimal amount) {
         this.expense_id = expense_id;
         this.item = item;
         this.cost = cost;
+        this.amount = amount;
     }
 
     public int getId() {
@@ -48,6 +50,14 @@ public class ExpensesDetails {
 
     public void setCost(BigDecimal cost) {
         this.cost = cost;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     @Override
