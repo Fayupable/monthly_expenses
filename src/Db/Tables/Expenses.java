@@ -1,10 +1,12 @@
 package Db.Tables;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Expenses {
+public class Expenses implements Comparable<Expenses> {
     private int id;
     private int person_id;
     private BigDecimal amount;
@@ -104,5 +106,10 @@ public class Expenses {
                 ", payment_method_id=" + payment_method_id +
                 ", date=" + date +
                 '}';
+    }
+
+    @Override
+    public int compareTo(@NotNull Expenses o) {
+        return 0;
     }
 }

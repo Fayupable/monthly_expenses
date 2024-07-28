@@ -1,5 +1,6 @@
 package Db;
 
+import Bst.AvlTree;
 import Db.Enum.EPaymentMethods;
 import Db.Enum.EPersonType;
 import Db.Exception.*;
@@ -47,11 +48,10 @@ public class DbFunction implements IDbFunction {
     private static final String delete_expense_query = "DELETE FROM expenses WHERE id = ?";
     private static final String get_expenses_query = "SELECT * FROM expenses";
     private static final String get_expenses_by_person_id_query = "SELECT * FROM expenses WHERE person_id = ?";
-    //all expenses variables
-    private static final String search_expenses_query = "SELECT * FROM expenses WHERE description LIKE ?, cost LIKE ?, amount LIKE ?, date LIKE ?, category_id LIKE ?, payment_method_id LIKE ?";
-
-
-    //Expenses Details
+    private static final String search_expenses_query = "SELECT * FROM expenses WHERE description LIKE ? OR cost LIKE ? OR amount LIKE ? OR `date` LIKE ? OR category_id LIKE ? OR payment_method_id LIKE ?";
+    private static final String filter_asc_expenses_query = "SELECT * FROM expenses ORDER BY cost ASC";
+    private static final String filter_desc_expenses_query = "SELECT * FROM expenses ORDER BY cost DESC";
+    private static final String filter_date_expenses_query = "SELECT * FROM expenses ORDER BY date";
 
     @Override
     public int login(Persons person) throws DbConnectException, SQLException {
@@ -101,6 +101,8 @@ public class DbFunction implements IDbFunction {
         }
         return -1;
     }
+
+    //Expenses Details
 
     //Persons
     @Override
@@ -455,6 +457,8 @@ public class DbFunction implements IDbFunction {
         return categories;
     }
 
+
+    //Expenses
     @Override
     public void insertExpense(Expenses expenses) throws DbConnectException, SQLException {
         conn = DbConnector.getConnection();
@@ -627,6 +631,12 @@ public class DbFunction implements IDbFunction {
         conn = DbConnector.getConnection();
         ps = conn.prepareStatement(search_expenses_query);
         ps.setString(1, "%" + search + "%");
+        ps.setString(2, "%" + search + "%");
+        ps.setString(3, "%" + search + "%");
+        ps.setString(4, "%" + search + "%");
+        ps.setString(5, "%" + search + "%");
+        ps.setString(6, "%" + search + "%");
+
         rs = ps.executeQuery();
         while (rs.next()) {
             Expenses expense = new Expenses();
@@ -664,4 +674,46 @@ public class DbFunction implements IDbFunction {
         return expenses;
 
     }
+
+    public List<Expenses> getExpensesSorted(String sortOrder) {
+        String query;
+        switch (sortOrder) {
+            case "asc":
+                query = filter_asc_expenses_query;
+                break;
+            case "desc":
+                query = filter_desc_expenses_query;
+                break;
+            case "date":
+                query = filter_date_expenses_query;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
+        }
+
+        List<Expenses> expenses = new ArrayList<>();
+
+        try (Connection conn = DbConnector.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Expenses expense = new Expenses();
+                expense.setId(rs.getInt("id"));
+                expense.setPerson_id(rs.getInt("person_id"));
+                expense.setCost(rs.getBigDecimal("cost"));
+                expense.setAmount(rs.getBigDecimal("amount"));
+                expense.setDescription(rs.getString("description"));
+                expense.setCategory_id(rs.getInt("category_id"));
+                expense.setPayment_method_id(rs.getInt("payment_method_id"));
+                expense.setDate(rs.getDate("date"));
+                expenses.add(expense);
+            }
+        } catch (SQLException | DbConnectException e) {
+            e.printStackTrace();
+        }
+
+        return expenses;
+    }
+
 }

@@ -57,6 +57,15 @@ public class MainPage extends javax.swing.JFrame {
         set_categories_combobox();
 
     }
+    private void updateTable (List<Expenses> expensesList) {
+        model = new DefaultTableModel();
+        model.setColumnIdentifiers(new Object[]{"Id", "Cost", "Amount", "Description", "Category", "Payment Method", "Date"});
+        for (Expenses expenses : expensesList) {
+            model.addRow(new Object[]{expenses.getId(), expenses.getCost(), expenses.getAmount(), expenses.getDescription(), expenses.getCategory_id(), expenses.getPayment_method_id(), expenses.getDate()});
+        }
+        tbl_expenses.setModel(model);
+    }
+
 
     private Persons getLoggedInUser() {
         return loggedInUser;
@@ -1034,8 +1043,15 @@ public class MainPage extends javax.swing.JFrame {
         txta_expenses_description.setText("");
         cmbx_expenses_category.setSelectedIndex(0);
         cmbx_expenses_payment_methods.setSelectedIndex(0);
-        //dd/MM/yyyy
-        txtf_expenses_date.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date(System.currentTimeMillis())));
+        btngrp_expenses.clearSelection();
+        try {
+            getExpensesData();
+        } catch (DbConnectException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        txtf_expenses_date.setText(new Date(System.currentTimeMillis()).toString());
     }
 
     private void btn_expenses_clearMouseEntered(java.awt.event.MouseEvent evt) {
@@ -1053,18 +1069,34 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_searchActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        String search = txtf_expenses_search.getText();
+        try {
+            List<Expenses> expenses = dbFunction.searchExpenses(search);
+            updateTable(expenses);
+        } catch (DbConnectException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void rbtn_expenses_dateActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        List<Expenses> expenses = dbFunction.getExpensesSorted("date");
+        updateTable(expenses);
     }
 
     private void rbtn_expenses_descActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        List<Expenses> expenses = dbFunction.getExpensesSorted("desc");
+        updateTable(expenses);
     }
 
     private void rbtn_expenses_ascActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        List<Expenses> expenses = dbFunction.getExpensesSorted("asc");
+        updateTable(expenses);
     }
 
     /**

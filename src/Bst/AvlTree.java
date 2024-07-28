@@ -5,6 +5,10 @@ import org.jetbrains.annotations.NotNull;
 public class AvlTree<T extends Comparable<T>> implements Tree<T> {
     private AvlNode<T> root;
 
+    public AvlNode<T> getRoot() {
+        return root;
+    }
+
     private int height(AvlNode<T> node) {
         if (node == null) return 0;
         return node.getHeight();
@@ -238,6 +242,21 @@ public class AvlTree<T extends Comparable<T>> implements Tree<T> {
             System.out.print(node.getData() + " ");
             preorderRec((AvlNode<T>) node.getLeftChild());
             preorderRec((AvlNode<T>) node.getRightChild());
+        }
+    }
+
+    //eslesen degerleri bulan fonksiyon(birden fazla degeri bulacak)
+    public void find(T data) {
+        findRec(root, data);
+    }
+
+    private void findRec(AvlNode<T> node, T data) {
+        if (node != null) {
+            findRec((AvlNode<T>) node.getLeftChild(), data);
+            if (node.getData().equals(data)) {
+                System.out.print(node.getData() + " ");
+            }
+            findRec((AvlNode<T>) node.getRightChild(), data);
         }
     }
 
