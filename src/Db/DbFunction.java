@@ -250,7 +250,7 @@ public class DbFunction implements IDbFunction {
         while (rs.next()) {
             PaymentMethods paymentMethod = new PaymentMethods();
             paymentMethod.setId(rs.getInt("id"));
-            paymentMethod.setPaymentMethod(EPaymentMethods.valueOf(rs.getString("name")));
+            paymentMethod.setPaymentMethod(EPaymentMethods.fromDisplayName(rs.getString("name")));
             paymentMethods.add(paymentMethod);
         }
         if (rs != null) {

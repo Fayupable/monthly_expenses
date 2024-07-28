@@ -21,4 +21,12 @@ public enum EPaymentMethods {
     public String toString() {
         return displayName;
     }
+    public static EPaymentMethods fromDisplayName(String displayName) {
+        for (EPaymentMethods method : EPaymentMethods.values()) {
+            if (method.getDisplayName().equals(displayName)) {
+                return method;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant with display name " + displayName);
+    }
 }
