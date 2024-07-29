@@ -44,16 +44,15 @@ public class Main {
 //                throw new RuntimeException(e);
 //            }
 //        }
-
 //        CreateCsv createExcel = new CreateCsv();
 //        try {
-//            // Dizini ve dosya adını belirleyin
-//            String directoryPath = "/Users/pc/Desktop/code/Sql"; // Dizin yolu
 //            String fileName = "expenses.xlsx"; // Dosya adı
+//            String downloadsDirectory = createExcel.getUserDownloadsFolder(); // Kullanıcının Downloads klasörünü al
 //
-//            createExcel.exportExpensesToExcel(directoryPath, fileName);
+//            createExcel.exportExpensesToExcel(downloadsDirectory, fileName);
 //        } catch (DbConnectException | SQLException | IOException e) {
 //            e.printStackTrace();
 //        }
+//    }
     }
 }

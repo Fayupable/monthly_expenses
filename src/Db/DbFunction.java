@@ -65,86 +65,6 @@ public class DbFunction implements IDbFunction {
     private static final String filter_date_expenses_details_query = "SELECT * FROM expenses_details ORDER BY date";
 
 
-    //csv
-    private static final String EXPORT_EXPENSES_QUERY = "SELECT * FROM expenses";
-    public void exportExpensesToCsv(String directoryPath, String fileName) throws DbConnectException, SQLException, IOException {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-        PrintWriter csvWriter = null;
-
-        try {
-            // Dizin var mı kontrol et, yoksa oluştur
-            File directory = new File(directoryPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            // Dosya yolunu oluştur
-            File file = new File(directoryPath + File.separator + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            connection = DbConnector.getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(EXPORT_EXPENSES_QUERY);
-            csvWriter = new PrintWriter(new FileWriter(file));
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            // Başlık satırını yazma
-            for (int i = 1; i <= columnCount; i++) {
-                csvWriter.print(metaData.getColumnName(i));
-                if (i < columnCount) {
-                    csvWriter.print(",");
-                }
-            }
-            csvWriter.println();
-
-            // Veri satırlarını yazma
-            while (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    csvWriter.print(resultSet.getString(i));
-                    if (i < columnCount) {
-                        csvWriter.print(",");
-                    }
-                }
-                csvWriter.println();
-            }
-
-            System.out.println("Data has been exported to " + file.getAbsolutePath());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (csvWriter != null) {
-                csvWriter.close();
-            }
-        }
-    }
-
-
-
     @Override
     public int login(Persons person) throws DbConnectException, SQLException {
         Connection conn = null;
@@ -326,6 +246,7 @@ public class DbFunction implements IDbFunction {
         }
         return expensesDetails;
     }
+
     @Override
     public List<ExpensesDetails> getExpenseDetails() throws DbConnectException, SQLException {
         List<ExpensesDetails> expensesDetails = new ArrayList<>();
@@ -365,7 +286,7 @@ public class DbFunction implements IDbFunction {
         return expensesDetails;
     }
 
-    public List<ExpensesDetails> getExpensesDetailsSorted(String sortOrder){
+    public List<ExpensesDetails> getExpensesDetailsSorted(String sortOrder) {
         String query;
         switch (sortOrder) {
             case "asc":

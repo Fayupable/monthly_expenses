@@ -1,6 +1,7 @@
 package UI;
 
 
+import Db.Csv.CreateCsv;
 import Db.DbFunction;
 import Db.Enum.ECategoryType;
 import Db.Enum.EPaymentMethods;
@@ -22,6 +23,7 @@ public class MainPage extends javax.swing.JFrame {
     private DbFunction dbFunction;
     private Expenses expenses;
     DefaultTableModel model;
+    private CreateCsv createData;
 
     /**
      * Creates new form MainPage
@@ -40,6 +42,7 @@ public class MainPage extends javax.swing.JFrame {
 
     public MainPage(Persons loggedInUser) {
         this.loggedInUser = loggedInUser;
+        this.createData = new CreateCsv();
         dbFunction = new DbFunction();
         initComponents();
 
@@ -1117,6 +1120,10 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_item_export_excelActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        int personId = loggedInUser.getId();
+        CreateCsv createData = new CreateCsv();
+        String downloadsDirectory = createData.getUserDownloadsFolder();
+        createData.exportExpensesToExcel(downloadsDirectory, "expenses.xlsx", personId);
     }
 
     private void menu_item_import_excelActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1125,6 +1132,11 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_item_export_xmlActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        int personId = loggedInUser.getId();
+        CreateCsv createData = new CreateCsv();
+        String downloadsDirectory = createData.getUserDownloadsFolder();
+        createData.exportExpensesToXml(downloadsDirectory, "expenses.xml", personId);
+
     }
 
     private void menu_item_import_xmlActionPerformed(java.awt.event.ActionEvent evt) {

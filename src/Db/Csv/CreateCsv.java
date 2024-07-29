@@ -11,6 +11,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 
 public class CreateCsv {
@@ -20,146 +22,133 @@ public class CreateCsv {
     private PrintWriter csvWriter;
 
 
-    private static final String EXPORT_EXPENSES_QUERY = "SELECT * FROM expenses";
+    private static final String EXPORT_EXPENSES_QUERY = "SELECT * FROM expenses WHERE person_id = ?";
 
 
-    public void exportExpensesToCsv(String directoryPath, String fileName) throws DbConnectException, SQLException, IOException {
+    public String getUserDownloadsFolder() {
+        String userHome = System.getProperty("user.home");
+        Path downloadsPath = Paths.get(userHome, "Downloads");
+        return downloadsPath.toString();
+    }
 
-
-        try {
-            File directory = new File(directoryPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            File file = new File(directoryPath + File.separator + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            connection = DbConnector.getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(EXPORT_EXPENSES_QUERY);
-            csvWriter = new PrintWriter(new FileWriter(file));
-
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            for (int i = 1; i <= columnCount; i++) {
-                csvWriter.print(metaData.getColumnName(i));
-                if (i < columnCount) {
-                    csvWriter.print(",");
-                }
-            }
-            csvWriter.println();
-
-            while (resultSet.next()) {
-                for (int i = 1; i <= columnCount; i++) {
-                    csvWriter.print(resultSet.getString(i));
-                    if (i < columnCount) {
-                        csvWriter.print(",");
-                    }
-                }
-                csvWriter.println();
-            }
-
-            System.out.println("Data has been exported to " + file.getAbsolutePath());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (csvWriter != null) {
-                csvWriter.close();
-            }
+    public void exportExpenses(String fileType, String fileName, int personId) {
+        String downloadsDirectory = getUserDownloadsFolder();
+        switch (fileType.toLowerCase()) {
+            case "csv":
+                exportExpensesToCsv(downloadsDirectory, fileName, personId);
+                break;
+            case "excel":
+                exportExpensesToExcel(downloadsDirectory, fileName, personId);
+                break;
+            case "xml":
+                exportExpensesToXml(downloadsDirectory, fileName, personId);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid file type: " + fileType);
         }
     }
 
-    public void exportExpensesToExcel(@NotNull String directoryPath, @NotNull String fileName) throws DbConnectException, SQLException, IOException {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Expenses");
+    public void exportExpensesToCsv(String downloadsDirectory, String fileName, int personId) {
+        try (Connection connection = DbConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(EXPORT_EXPENSES_QUERY)) {
 
-        try {
-            File directory = new File(directoryPath);
-            if (!directory.exists()) {
-                directory.mkdirs();
+            preparedStatement.setInt(1, personId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            String filePath = downloadsDirectory + File.separator + fileName;
+            try (PrintWriter csvWriter = new PrintWriter(new FileWriter(filePath))) {
+                csvWriter.println("ID,Amount,Category,Payment Method,Date,Description");
+
+                while (resultSet.next()) {
+                    csvWriter.println(resultSet.getInt("id") + "," +
+                            resultSet.getDouble("amount") + "," +
+                            resultSet.getString("category") + "," +
+                            resultSet.getString("payment_method") + "," +
+                            resultSet.getTimestamp("date").toString() + "," +
+                            resultSet.getString("description"));
+                }
+
+                System.out.println("CSV data has been exported to " + filePath);
             }
+        } catch (SQLException | IOException | DbConnectException e) {
+            e.printStackTrace();
+        }
+    }
 
-            File file = new File(directoryPath + File.separator + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+    public void exportExpensesToExcel(String downloadsDirectory, String fileName, int personId) {
+        try (Connection connection = DbConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(EXPORT_EXPENSES_QUERY)) {
 
-            connection = DbConnector.getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(EXPORT_EXPENSES_QUERY);
+            preparedStatement.setInt(1, personId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Expenses");
 
-            // Başlık satırını yazma
-            Row headerRow = sheet.createRow(0);
-            for (int i = 1; i <= columnCount; i++) {
-                Cell cell = headerRow.createCell(i - 1);
-                cell.setCellValue(metaData.getColumnName(i));
-            }
+            int rowNumber = 0;
+            Row row = sheet.createRow(rowNumber);
+            row.createCell(0).setCellValue("ID");
+            row.createCell(1).setCellValue("Amount");
+            row.createCell(2).setCellValue("category_id");
+            row.createCell(3).setCellValue("Payment_Method_id");
+            row.createCell(4).setCellValue("Date");
+            row.createCell(5).setCellValue("Description");
 
-            // Veri satırlarını yazma
-            int rowIndex = 1;
             while (resultSet.next()) {
-                Row row = sheet.createRow(rowIndex++);
-                for (int i = 1; i <= columnCount; i++) {
-                    Cell cell = row.createCell(i - 1);
-                    cell.setCellValue(resultSet.getString(i));
-                }
+                rowNumber++;
+                row = sheet.createRow(rowNumber);
+                row.createCell(0).setCellValue(resultSet.getInt("id"));
+                row.createCell(1).setCellValue(resultSet.getDouble("amount"));
+                row.createCell(2).setCellValue(resultSet.getString("category_id"));
+                row.createCell(3).setCellValue(resultSet.getString("payment_method_id"));
+                row.createCell(4).setCellValue(resultSet.getTimestamp("date").toString());
+                row.createCell(5).setCellValue(resultSet.getString("description"));
             }
 
-            // Excel dosyasını kaydet
-            try (FileOutputStream fileOut = new FileOutputStream(file)) {
-                workbook.write(fileOut);
-            }
+            String filePath = downloadsDirectory + File.separator + fileName;
+            File file = new File(filePath);
+            file.getParentFile().mkdirs(); // Klasörleri oluşturur
 
-            System.out.println("Data has been exported to " + file.getAbsolutePath());
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            try (FileOutputStream fileOutputStream = new FileOutputStream(filePath)) {
+                workbook.write(fileOutputStream);
+                System.out.println("Excel data has been exported to " + filePath);
             }
             workbook.close();
+        } catch (SQLException | IOException | DbConnectException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportExpensesToXml(String downloadsDirectory, String fileName, int personId) {
+        try (Connection connection = DbConnector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(EXPORT_EXPENSES_QUERY)) {
+
+            preparedStatement.setInt(1, personId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            String filePath = downloadsDirectory + File.separator + fileName;
+            File file = new File(filePath);
+            file.getParentFile().mkdirs(); // Klasörleri oluşturur
+
+            try (PrintWriter xmlWriter = new PrintWriter(new FileWriter(filePath))) {
+                xmlWriter.println("<Expenses>");
+
+                while (resultSet.next()) {
+                    xmlWriter.println("  <Expense>");
+                    xmlWriter.println("    <ID>" + resultSet.getInt("id") + "</ID>");
+                    xmlWriter.println("    <Amount>" + resultSet.getDouble("amount") + "</Amount>");
+                    xmlWriter.println("    <Category>" + resultSet.getString("category_id") + "</Category>");
+                    xmlWriter.println("    <PaymentMethod>" + resultSet.getString("payment_method_id") + "</PaymentMethod>");
+                    xmlWriter.println("    <Date>" + resultSet.getTimestamp("date").toString() + "</Date>");
+                    xmlWriter.println("    <Description>" + resultSet.getString("description") + "</Description>");
+                    xmlWriter.println("  </Expense>");
+                }
+
+                xmlWriter.println("</Expenses>");
+                System.out.println("XML data has been exported to " + filePath);
+            }
+        } catch (SQLException | IOException | DbConnectException e) {
+            e.printStackTrace();
         }
     }
 }
