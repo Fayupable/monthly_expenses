@@ -137,5 +137,9 @@ Make sure to include the necessary dependencies for the MySQL JDBC connector in 
     <version>8.0.26</version>
 </dependency>
 ```
+If you are using Gradle, add the following line to your build.gradle file:
+```
+implementation 'mysql:mysql-connector-java:8.0.26'
+```
 
 
