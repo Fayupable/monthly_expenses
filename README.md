@@ -117,6 +117,25 @@ END;
 DELIMITER ;
 
 ```
+# **Usage**
 
+**DbConnector**
+Requirements
+
+	•	Java Development Kit (JDK) 8 or higher
+	•	MySQL database server
+	•	MySQL JDBC Connector (Connector/J)
+
+Project Setup
+
+Make sure to include the necessary dependencies for the MySQL JDBC connector in your project. If you are using Maven, add the following dependency to your pom.xml file:
+
+```
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.26</version>
+</dependency>
+```
 
 
