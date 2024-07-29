@@ -8,6 +8,7 @@ import Db.Tables.Categories;
 import Db.Tables.PaymentMethods;
 import Db.Tables.Persons;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -42,10 +43,6 @@ public class Main {
 //                throw new RuntimeException(e);
 //            }
 //        }
-
-
-
-
 
 
     }

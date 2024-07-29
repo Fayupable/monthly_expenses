@@ -8,15 +8,18 @@ public class ExpensesDetails {
     private String item;
     private BigDecimal cost;
     private BigDecimal amount;
+    private int person_id;
 
     public ExpensesDetails() {
     }
 
-    public ExpensesDetails(int expense_id, String item, BigDecimal cost, BigDecimal amount) {
+    public ExpensesDetails(int expense_id, String item, BigDecimal cost, BigDecimal amount, int person_id) {
         this.expense_id = expense_id;
         this.item = item;
         this.cost = cost;
         this.amount = amount;
+        this.person_id = person_id;
+
     }
 
     public int getId() {
@@ -60,8 +63,16 @@ public class ExpensesDetails {
         this.amount = amount;
     }
 
+    public int getPerson_id() {
+        return person_id;
+    }
+
+    public void setPerson_id(int person_id) {
+        this.person_id = person_id;
+    }
+
     @Override
     public String toString() {
-        return "ExpensesDetails{" + "id=" + id + ", expense_id=" + expense_id + ", item='" + item + '\'' + ", cost=" + cost + '}';
+        return "ExpensesDetails{" + "id=" + id + ", expense_id=" + expense_id + ", item='" + item + '\'' + ", cost=" + cost + ", amount=" + amount + ", person_id=" + person_id + '}';
     }
 }

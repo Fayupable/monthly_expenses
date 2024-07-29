@@ -6,6 +6,10 @@ import Db.Enum.EPersonType;
 import Db.Exception.*;
 import Db.Tables.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +59,89 @@ public class DbFunction implements IDbFunction {
     private static final String delete_expense_details_query = "DELETE FROM expenses_details WHERE id = ?";
     private static final String get_expense_details_query = "SELECT * FROM expenses_details";
     private static final String search_expense_details_query = "SELECT * FROM expenses_details WHERE item LIKE ? OR cost LIKE ? OR amount LIKE ?";
-    private static final String get_expense_details_by_expense_id_query = "SELECT * FROM expenses_details WHERE expense_id = ?";
+    private static final String get_expense_details_by_expense_id_query = "SELECT * FROM expenses_details WHERE person_id = ?";
     private static final String filter_asc_expenses_details_query = "SELECT * FROM expenses_details ORDER BY cost ASC";
     private static final String filter_desc_expenses_details_query = "SELECT * FROM expenses_details ORDER BY cost DESC";
     private static final String filter_date_expenses_details_query = "SELECT * FROM expenses_details ORDER BY date";
+
+
+    //csv
+    private static final String EXPORT_EXPENSES_QUERY = "SELECT * FROM expenses";
+    public void exportExpensesToCsv(String directoryPath, String fileName) throws DbConnectException, SQLException, IOException {
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        PrintWriter csvWriter = null;
+
+        try {
+            // Dizin var mı kontrol et, yoksa oluştur
+            File directory = new File(directoryPath);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Dosya yolunu oluştur
+            File file = new File(directoryPath + File.separator + fileName);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            connection = DbConnector.getConnection();
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(EXPORT_EXPENSES_QUERY);
+            csvWriter = new PrintWriter(new FileWriter(file));
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            // Başlık satırını yazma
+            for (int i = 1; i <= columnCount; i++) {
+                csvWriter.print(metaData.getColumnName(i));
+                if (i < columnCount) {
+                    csvWriter.print(",");
+                }
+            }
+            csvWriter.println();
+
+            // Veri satırlarını yazma
+            while (resultSet.next()) {
+                for (int i = 1; i <= columnCount; i++) {
+                    csvWriter.print(resultSet.getString(i));
+                    if (i < columnCount) {
+                        csvWriter.print(",");
+                    }
+                }
+                csvWriter.println();
+            }
+
+            System.out.println("Data has been exported to " + file.getAbsolutePath());
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (csvWriter != null) {
+                csvWriter.close();
+            }
+        }
+    }
 
 
 
@@ -333,6 +416,7 @@ public class DbFunction implements IDbFunction {
             expenseDetail.setItem(rs.getString("item"));
             expenseDetail.setCost(rs.getBigDecimal("cost"));
             expenseDetail.setAmount(rs.getBigDecimal("amount"));
+            expenseDetail.setPerson_id(rs.getInt("person_id"));
             expensesDetails.add(expenseDetail);
         }
         if (rs != null) {

@@ -1,9 +1,9 @@
 package Db.Enum;
 
 public enum EPersonType {
-    MEMBER("Üye"),
-    MODERATOR("Yetkili"),
-    ADMIN("Admin");
+    MEMBER("MEMBER"),
+    MODERATOR("MODERATOR"),
+    ADMIN("ADMIN");
 
     private final String displayName;
 

@@ -128,25 +128,20 @@ public class MainPage extends javax.swing.JFrame {
         }
         tbl_expenses.setModel(model);
     }
-    private void getExpensesDetailsDataById(){
-        dbFunction = new DbFunction();
-        int userId = loggedInUser.getId();
+    private void getExpensesDetailsData(){
         try {
-            List<ExpensesDetails> expensesDetailsList = dbFunction.getExpensesDetailByPersonId(userId);
+            List<ExpensesDetails> expensesDetailsList = dbFunction.getExpensesDetailByPersonId(loggedInUser.getId());
             model = new DefaultTableModel();
             model.setColumnIdentifiers(new Object[]{"Id", "Expense Id", "Item", "Cost", "Amount"});
             for (ExpensesDetails expensesDetails : expensesDetailsList) {
                 model.addRow(new Object[]{expensesDetails.getId(), expensesDetails.getExpense_id(), expensesDetails.getItem(), expensesDetails.getCost(), expensesDetails.getAmount()});
             }
             tbl_expenses_detail.setModel(model);
-        } catch (DbConnectException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
     }
+
     private void getCategoriesData() {
         try {
             List<Categories> categoriesList = dbFunction.getCategories();
@@ -181,19 +176,6 @@ public class MainPage extends javax.swing.JFrame {
             }
 
             tbl_payment_methods.setModel(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private void getExpensesDetailsData(){
-        try {
-            List<ExpensesDetails> expensesDetailsList = dbFunction.getExpenseDetails();
-            model = new DefaultTableModel();
-            model.setColumnIdentifiers(new Object[]{"Id", "Expense Id", "Item", "Cost", "Amount"});
-            for (ExpensesDetails expensesDetails : expensesDetailsList) {
-                model.addRow(new Object[]{expensesDetails.getId(), expensesDetails.getExpense_id(), expensesDetails.getItem(), expensesDetails.getCost(), expensesDetails.getAmount()});
-            }
-            tbl_expenses_detail.setModel(model);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1166,7 +1148,7 @@ public class MainPage extends javax.swing.JFrame {
             getPaymentMethodsData();
         } else if (tabTitle.equals("Expenses Detail")) {
             try {
-                getExpensesDetailsDataById();
+                getExpensesDetailsData();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
