@@ -7,19 +7,26 @@ The Monthly Expense Tracker is a Java-based application that helps users manage 
 
 
 # **Table of Contents**
-1. [Installation](#installation)
+1. [Database](#Database)
 2. [Usage](#usage)
 3. [Modules](#modules)
 4. [Contributing](#contributing)
 
 
+# **Database**
+Create Database
 
+**Mysql**
+```
 -- Create the new database
-CREATE DATABASE IF NOT EXISTS new_database;
+CREATE DATABASE IF NOT EXISTS monthly_expense;
 
 -- Use the new database
-USE new_database;
+USE monthly_expense;
 
+```
+**Persons**
+```
 -- Create the Persons table
 CREATE TABLE Persons (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,18 +37,28 @@ CREATE TABLE Persons (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+```
+**Categories**
+```
 -- Create the Categories table
 CREATE TABLE Categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
+
+```
+**Payment_methods**
+```
 -- Create the Payment_Methods table
 CREATE TABLE Payment_Methods (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
+```
 
+**Expenses**
+```
 -- Create the Expenses table
 CREATE TABLE Expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -56,6 +73,9 @@ CREATE TABLE Expenses (
     FOREIGN KEY (payment_method_id) REFERENCES Payment_Methods(id)
 );
 
+```
+**Expenses_Details**
+```
 -- Create the Expenses_Details table
 CREATE TABLE Expenses_Details (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,7 +87,10 @@ CREATE TABLE Expenses_Details (
     FOREIGN KEY (expense_id) REFERENCES Expenses(id)
 );
 
--- Change the delimiter for triggers
+```
+
+**Delimeter**
+```
 DELIMITER //
 
 -- Create the after_expenses_insert trigger
@@ -92,3 +115,8 @@ END;
 
 -- Revert the delimiter
 DELIMITER ;
+
+```
+
+
+
