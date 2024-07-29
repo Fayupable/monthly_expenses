@@ -30,6 +30,7 @@ public interface IDbFunction {
     List<Expenses> getExpenses() throws DbConnectException, SQLException;
     List<Expenses> searchExpenses(String search) throws DbConnectException, SQLException;
     List<Expenses> getExpensesByPersonId(int personId) throws DbConnectException, SQLException;
+    List<Expenses> getExpensesSorted(String sortOrder) throws DbConnectException, SQLException;
 
 
 
@@ -40,6 +41,10 @@ public interface IDbFunction {
     List<ExpensesDetails> getExpenseDetails(int expenseId) throws DbConnectException, SQLException;
     List<ExpensesDetails> searchExpenseDetails(String search) throws DbConnectException, SQLException;
     List<ExpensesDetails> getExpenseDetails() throws DbConnectException, SQLException;
+    List<ExpensesDetails>  getExpensesDetailsSorted(String sortOrder) throws DbConnectException, SQLException;
+    List<ExpensesDetails> getExpensesDetailByPersonId(int personId) throws DbConnectException, SQLException;
+
+
 
 
 

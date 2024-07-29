@@ -51,11 +51,15 @@ public class DbFunction implements IDbFunction {
     private static final String filter_date_expenses_query = "SELECT * FROM expenses ORDER BY date";
 
     //Expenses Details
-    private static final String update_expense_details_query = "UPDATE expenses_details SET expense_id = ?, item = ?, cost = ?, amount = ? WHERE id = ?";
+    private static final String update_expense_details_query = "UPDATE expenses_details SET item = ? WHERE id = ?";
     private static final String delete_expense_details_query = "DELETE FROM expenses_details WHERE id = ?";
     private static final String get_expense_details_query = "SELECT * FROM expenses_details";
     private static final String search_expense_details_query = "SELECT * FROM expenses_details WHERE item LIKE ? OR cost LIKE ? OR amount LIKE ?";
     private static final String get_expense_details_by_expense_id_query = "SELECT * FROM expenses_details WHERE expense_id = ?";
+    private static final String filter_asc_expenses_details_query = "SELECT * FROM expenses_details ORDER BY cost ASC";
+    private static final String filter_desc_expenses_details_query = "SELECT * FROM expenses_details ORDER BY cost DESC";
+    private static final String filter_date_expenses_details_query = "SELECT * FROM expenses_details ORDER BY date";
+
 
 
     @Override
@@ -114,11 +118,8 @@ public class DbFunction implements IDbFunction {
     public void updateExpenseDetails(ExpensesDetails expensesDetails) throws DbConnectException, SQLException {
         conn = DbConnector.getConnection();
         ps = conn.prepareStatement(update_expense_details_query);
-        ps.setInt(1, expensesDetails.getExpense_id());
-        ps.setString(2, expensesDetails.getItem());
-        ps.setBigDecimal(3, expensesDetails.getCost());
-        ps.setBigDecimal(4, expensesDetails.getAmount());
-        ps.setInt(5, expensesDetails.getId());
+        ps.setString(1, expensesDetails.getItem());
+        ps.setInt(2, expensesDetails.getId());
         ps.executeUpdate();
         if (ps != null) {
             try {
@@ -242,7 +243,6 @@ public class DbFunction implements IDbFunction {
         }
         return expensesDetails;
     }
-
     @Override
     public List<ExpensesDetails> getExpenseDetails() throws DbConnectException, SQLException {
         List<ExpensesDetails> expensesDetails = new ArrayList<>();
@@ -280,6 +280,84 @@ public class DbFunction implements IDbFunction {
             }
         }
         return expensesDetails;
+    }
+
+    public List<ExpensesDetails> getExpensesDetailsSorted(String sortOrder){
+        String query;
+        switch (sortOrder) {
+            case "asc":
+                query = filter_asc_expenses_details_query;
+                break;
+            case "desc":
+                query = filter_desc_expenses_details_query;
+                break;
+            case "date":
+                query = filter_date_expenses_details_query;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid sort order: " + sortOrder);
+        }
+
+        List<ExpensesDetails> expensesDetails = new ArrayList<>();
+
+        try (Connection conn = DbConnector.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ExpensesDetails expenseDetail = new ExpensesDetails();
+                expenseDetail.setId(rs.getInt("id"));
+                expenseDetail.setExpense_id(rs.getInt("expense_id"));
+                expenseDetail.setItem(rs.getString("item"));
+                expenseDetail.setCost(rs.getBigDecimal("cost"));
+                expenseDetail.setAmount(rs.getBigDecimal("amount"));
+                expensesDetails.add(expenseDetail);
+            }
+        } catch (SQLException | DbConnectException e) {
+            e.printStackTrace();
+        }
+        return expensesDetails;
+    }
+
+    @Override
+    public List<ExpensesDetails> getExpensesDetailByPersonId(int personId) throws DbConnectException, SQLException {
+        List<ExpensesDetails> expensesDetails = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_expense_details_by_expense_id_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            ExpensesDetails expenseDetail = new ExpensesDetails();
+            expenseDetail.setId(rs.getInt("id"));
+            expenseDetail.setExpense_id(rs.getInt("expense_id"));
+            expenseDetail.setItem(rs.getString("item"));
+            expenseDetail.setCost(rs.getBigDecimal("cost"));
+            expenseDetail.setAmount(rs.getBigDecimal("amount"));
+            expensesDetails.add(expenseDetail);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expensesDetails;
+
     }
 
     //Persons
@@ -637,6 +715,7 @@ public class DbFunction implements IDbFunction {
 
 
     //Expenses
+
     @Override
     public void insertExpense(Expenses expenses) throws DbConnectException, SQLException {
         conn = DbConnector.getConnection();
