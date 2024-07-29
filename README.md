@@ -1,3 +1,19 @@
+# Monthly Expenses
+Monthly Expenses Java Project
+
+
+**Overview**
+The Monthly Expense Tracker is a Java-based application that helps users manage their monthly expenses efficiently. The application supports basic CRUD (Create, Read, Update, Delete) operations, enabling users to add, view, update, and delete their expenses. Additionally, it includes functionalities to search expenses and export data to Excel or XML formats for better data management and reporting.
+
+
+# **Table of Contents**
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [Modules](#modules)
+4. [Contributing](#contributing)
+
+
+
 -- Create the new database
 CREATE DATABASE IF NOT EXISTS new_database;
 
