@@ -55,31 +55,19 @@ public class MainPage extends javax.swing.JFrame {
         lbl_surname.setText("");
         txtf_expenses_id.setEditable(false);
         txtf_expenses_id.setBackground(Color.lightGray);
-        txtf_expenses_detail_amount.setEditable(false);
-        txtf_expenses_detail_cost.setEditable(false);
-        txtf_expenses_detail_id.setEditable(false);
-        txtf_expenses_detail_expenses_id.setEditable(false);
-        rbtn_expenses_detail_date.setVisible(false);
-        btn_expenses_detail_delete.setVisible(false);
+
         set_payment_methods_combobox();
         set_categories_combobox();
 
     }
-    private void updateTable (List<Expenses> expensesList) {
+
+    private void updateTable(List<Expenses> expensesList) {
         model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Id", "Cost", "Amount", "Description", "Category", "Payment Method", "Date"});
         for (Expenses expenses : expensesList) {
             model.addRow(new Object[]{expenses.getId(), expenses.getCost(), expenses.getAmount(), expenses.getDescription(), expenses.getCategory_id(), expenses.getPayment_method_id(), expenses.getDate()});
         }
         tbl_expenses.setModel(model);
-    }
-    private void updateTableExpensesDetail(List<ExpensesDetails> expensesDetailsList) {
-        model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Id", "Expense Id", "Item", "Cost", "Amount"});
-        for (ExpensesDetails expensesDetails : expensesDetailsList) {
-            model.addRow(new Object[]{expensesDetails.getId(), expensesDetails.getExpense_id(), expensesDetails.getItem(), expensesDetails.getCost(), expensesDetails.getAmount()});
-        }
-        tbl_expenses_detail.setModel(model);
     }
 
 
@@ -131,19 +119,7 @@ public class MainPage extends javax.swing.JFrame {
         }
         tbl_expenses.setModel(model);
     }
-    private void getExpensesDetailsData(){
-        try {
-            List<ExpensesDetails> expensesDetailsList = dbFunction.getExpensesDetailByPersonId(loggedInUser.getId());
-            model = new DefaultTableModel();
-            model.setColumnIdentifiers(new Object[]{"Id", "Expense Id", "Item", "Cost", "Amount"});
-            for (ExpensesDetails expensesDetails : expensesDetailsList) {
-                model.addRow(new Object[]{expensesDetails.getId(), expensesDetails.getExpense_id(), expensesDetails.getItem(), expensesDetails.getCost(), expensesDetails.getAmount()});
-            }
-            tbl_expenses_detail.setModel(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private void getCategoriesData() {
         try {
@@ -225,29 +201,6 @@ public class MainPage extends javax.swing.JFrame {
         btn_expenses_search = new javax.swing.JButton();
         btn_expenses_delete = new javax.swing.JButton();
         btn_expenses_clear = new javax.swing.JButton();
-        pnl_expenses_detail = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tbl_expenses_detail = new javax.swing.JTable();
-        lbl_expenses_detail_search = new javax.swing.JLabel();
-        txtf_expenses_detail_search = new javax.swing.JTextField();
-        btn_expenses_detail_search = new javax.swing.JButton();
-        rbtn_expenses_detail_asc = new javax.swing.JRadioButton();
-        rbtn_expenses_detail_desc = new javax.swing.JRadioButton();
-        rbtn_expenses_detail_date = new javax.swing.JRadioButton();
-        btn_expenses_detail_update = new javax.swing.JButton();
-        btn_expenses_detail_delete = new javax.swing.JButton();
-        btn_expenses_detail_clear = new javax.swing.JButton();
-        lbl_expenses_detail_id = new javax.swing.JLabel();
-        txtf_expenses_detail_id = new javax.swing.JTextField();
-        lbl_expenses_detail_expenses_id = new javax.swing.JLabel();
-        txtf_expenses_detail_expenses_id = new javax.swing.JTextField();
-        lbl_expenses_detail_item = new javax.swing.JLabel();
-        lbl_expenses_detail_amount = new javax.swing.JLabel();
-        txtf_expenses_detail_amount = new javax.swing.JTextField();
-        txtf_expenses_detail_cost = new javax.swing.JTextField();
-        lbl_expenses_detail_cost = new javax.swing.JLabel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        txta_expenses_detail_item = new javax.swing.JTextArea();
         pnl_categories = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbl_expenses_categories = new javax.swing.JTable();
@@ -290,9 +243,11 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 tbdp_dbMouseExited(evt);
             }
@@ -302,22 +257,24 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_expensesMouseExited(evt);
             }
         });
 
         tbl_expenses.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
+                new Object[][]{
                         {},
                         {},
                         {},
                         {}
                 },
-                new String [] {
+                new String[]{
 
                 }
         ));
@@ -346,9 +303,9 @@ public class MainPage extends javax.swing.JFrame {
         txta_expenses_description.setRows(5);
         jScrollPane5.setViewportView(txta_expenses_description);
 
-        cmbx_expenses_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbx_expenses_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
-        cmbx_expenses_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbx_expenses_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
         btn_expenses_add.setBackground(new java.awt.Color(98, 194, 242));
         btn_expenses_add.setText("Add");
@@ -356,6 +313,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_addMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_addMouseExited(evt);
             }
@@ -372,6 +330,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_updateMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_updateMouseExited(evt);
             }
@@ -421,6 +380,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_deleteMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_deleteMouseExited(evt);
             }
@@ -437,6 +397,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn_expenses_clearMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn_expenses_clearMouseExited(evt);
             }
@@ -564,250 +525,28 @@ public class MainPage extends javax.swing.JFrame {
 
         tbdp_db.addTab("Expenses", pnl_expenses);
 
-        pnl_expenses_detail.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                pnl_expenses_detailMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pnl_expenses_detailMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pnl_expenses_detailMouseExited(evt);
-            }
-        });
-
-        tbl_expenses_detail.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {},
-                        {},
-                        {},
-                        {}
-                },
-                new String [] {
-
-                }
-        ));
-        tbl_expenses_detail.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbl_expenses_detailMouseClicked(evt);
-            }
-        });
-        jScrollPane2.setViewportView(tbl_expenses_detail);
-
-        lbl_expenses_detail_search.setText("Search");
-
-        btn_expenses_detail_search.setText("Search");
-        btn_expenses_detail_search.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_expenses_detail_searchActionPerformed(evt);
-            }
-        });
-
-        btngrp_expenses.add(rbtn_expenses_detail_asc);
-        rbtn_expenses_detail_asc.setText("Asc");
-        rbtn_expenses_detail_asc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbtn_expenses_detail_ascActionPerformed(evt);
-            }
-        });
-
-        btngrp_expenses.add(rbtn_expenses_detail_desc);
-        rbtn_expenses_detail_desc.setText("Desc");
-        rbtn_expenses_detail_desc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbtn_expenses_detail_descActionPerformed(evt);
-            }
-        });
-
-        btngrp_expenses.add(rbtn_expenses_detail_date);
-        rbtn_expenses_detail_date.setText("Date");
-        rbtn_expenses_detail_date.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbtn_expenses_detail_dateActionPerformed(evt);
-            }
-        });
-
-        btn_expenses_detail_update.setBackground(new java.awt.Color(226, 165, 165));
-        btn_expenses_detail_update.setText("Update");
-        btn_expenses_detail_update.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_updateMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_updateMouseExited(evt);
-            }
-        });
-        btn_expenses_detail_update.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_expenses_detail_updateActionPerformed(evt);
-            }
-        });
-
-        btn_expenses_detail_delete.setBackground(new java.awt.Color(246, 26, 70));
-        btn_expenses_detail_delete.setText("Delete");
-        btn_expenses_detail_delete.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_deleteMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_deleteMouseExited(evt);
-            }
-        });
-        btn_expenses_detail_delete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_expenses_detail_deleteActionPerformed(evt);
-            }
-        });
-
-        btn_expenses_detail_clear.setBackground(new java.awt.Color(204, 204, 204));
-        btn_expenses_detail_clear.setText("Clear");
-        btn_expenses_detail_clear.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_clearMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn_expenses_detail_clearMouseExited(evt);
-            }
-        });
-        btn_expenses_detail_clear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_expenses_detail_clearActionPerformed(evt);
-            }
-        });
-
-        lbl_expenses_detail_id.setText("Id");
-
-        lbl_expenses_detail_expenses_id.setText("E-Id");
-
-        lbl_expenses_detail_item.setText("Item");
-
-        lbl_expenses_detail_amount.setText("Amount");
-
-        lbl_expenses_detail_cost.setText("Cost");
-
-        txta_expenses_detail_item.setColumns(20);
-        txta_expenses_detail_item.setRows(5);
-        jScrollPane6.setViewportView(txta_expenses_detail_item);
-
-        javax.swing.GroupLayout pnl_expenses_detailLayout = new javax.swing.GroupLayout(pnl_expenses_detail);
-        pnl_expenses_detail.setLayout(pnl_expenses_detailLayout);
-        pnl_expenses_detailLayout.setHorizontalGroup(
-                pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(26, 26, 26)
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                        .addComponent(lbl_expenses_detail_cost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                        .addComponent(lbl_expenses_detail_amount))
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                        .addComponent(txtf_expenses_detail_cost, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                                                                        .addComponent(txtf_expenses_detail_amount)))
-                                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                        .addComponent(lbl_expenses_detail_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                        .addComponent(lbl_expenses_detail_expenses_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                        .addComponent(lbl_expenses_detail_item))
-                                                                .addGap(18, 18, 18)
-                                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                                        .addComponent(txtf_expenses_detail_expenses_id, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
-                                                                        .addComponent(txtf_expenses_detail_id)))))
-                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                .addComponent(lbl_expenses_detail_search, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(txtf_expenses_detail_search, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(btn_expenses_detail_search)
-                                                .addGap(26, 26, 26)
-                                                .addComponent(rbtn_expenses_detail_asc)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(rbtn_expenses_detail_desc)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(rbtn_expenses_detail_date))
-                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                .addGap(72, 72, 72)
-                                                .addComponent(btn_expenses_detail_update, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(btn_expenses_detail_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(btn_expenses_detail_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(60, Short.MAX_VALUE))
-        );
-        pnl_expenses_detailLayout.setVerticalGroup(
-                pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(lbl_expenses_detail_search)
-                                        .addComponent(txtf_expenses_detail_search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(rbtn_expenses_detail_asc)
-                                        .addComponent(rbtn_expenses_detail_desc)
-                                        .addComponent(rbtn_expenses_detail_date)
-                                        .addComponent(btn_expenses_detail_search))
-                                .addGap(18, 18, 18)
-                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(43, 43, 43)
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(btn_expenses_detail_update, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(btn_expenses_detail_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(btn_expenses_detail_clear, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(lbl_expenses_detail_id)
-                                                        .addComponent(txtf_expenses_detail_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(lbl_expenses_detail_expenses_id)
-                                                        .addComponent(txtf_expenses_detail_expenses_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(pnl_expenses_detailLayout.createSequentialGroup()
-                                                                .addGap(63, 63, 63)
-                                                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE))
-                                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_expenses_detailLayout.createSequentialGroup()
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                .addComponent(lbl_expenses_detail_item)
-                                                                .addGap(119, 119, 119)))
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(lbl_expenses_detail_cost)
-                                                        .addComponent(txtf_expenses_detail_cost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(pnl_expenses_detailLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(lbl_expenses_detail_amount)
-                                                        .addComponent(txtf_expenses_detail_amount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                .addGap(144, 144, 144))))
-        );
-
-        tbdp_db.addTab("Expenses Detail", pnl_expenses_detail);
-
         pnl_categories.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_categoriesMouseExited(evt);
             }
         });
 
         tbl_expenses_categories.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
+                new Object[][]{
                         {},
                         {},
                         {},
                         {}
                 },
-                new String [] {
+                new String[]{
 
                 }
         ));
@@ -822,7 +561,7 @@ public class MainPage extends javax.swing.JFrame {
 
         lbl_categories_categories.setText("Categories");
 
-        cmbx_categories_categories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbx_categories_categories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
         btn_categories_clear.setBackground(new java.awt.Color(204, 204, 204));
         btn_categories_clear.setText("Clear");
@@ -880,22 +619,24 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 pnl_payment_methodsMouseExited(evt);
             }
         });
 
         tbl_payment_methods.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
+                new Object[][]{
                         {},
                         {},
                         {},
                         {}
                 },
-                new String [] {
+                new String[]{
 
                 }
         ));
@@ -914,7 +655,7 @@ public class MainPage extends javax.swing.JFrame {
             }
         });
 
-        cmbx_payment_methods_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbx_payment_methods_payment_methods.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
         lbl_payment_methods_categories.setText("Categories");
 
@@ -1049,6 +790,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_editMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_editMouseEntered(evt);
             }
@@ -1072,6 +814,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_categoriesMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_categoriesMouseEntered(evt);
             }
@@ -1083,6 +826,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_expenses_detailMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_expenses_detailMouseEntered(evt);
             }
@@ -1094,6 +838,7 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 menu_payment_methodsMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_payment_methodsMouseEntered(evt);
             }
@@ -1154,16 +899,11 @@ public class MainPage extends javax.swing.JFrame {
             } catch (DbConnectException | SQLException e) {
                 e.printStackTrace();
             }
-        }else if(tabTitle.equals("Categories")){
+        } else if (tabTitle.equals("Categories")) {
             getCategoriesData();
-        }else if(tabTitle.equals("Payment Methods")){
+        } else if (tabTitle.equals("Payment Methods")) {
             getPaymentMethodsData();
-        } else if (tabTitle.equals("Expenses Detail")) {
-            try {
-                getExpensesDetailsData();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+
 
         }
     }
@@ -1190,18 +930,6 @@ public class MainPage extends javax.swing.JFrame {
     }
 
     private void pnl_expensesMouseExited(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void pnl_expenses_detailMouseClicked(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void pnl_expenses_detailMouseEntered(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void pnl_expenses_detailMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
     }
 
@@ -1243,18 +971,6 @@ public class MainPage extends javax.swing.JFrame {
         }
     }
 
-    private void tbl_expenses_detailMouseClicked(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        int selectedIndex = tbl_expenses_detail.getSelectedRow();
-        if (selectedIndex != -1) {
-            txtf_expenses_detail_id.setText(tbl_expenses_detail.getValueAt(selectedIndex, 0).toString());
-            txtf_expenses_detail_expenses_id.setText(tbl_expenses_detail.getValueAt(selectedIndex, 1).toString());
-            txta_expenses_detail_item.setText(tbl_expenses_detail.getValueAt(selectedIndex, 2).toString());
-            txtf_expenses_detail_cost.setText(tbl_expenses_detail.getValueAt(selectedIndex, 3).toString());
-            txtf_expenses_detail_amount.setText(tbl_expenses_detail.getValueAt(selectedIndex, 4).toString());
-        }
-
-    }
 
     private void tbl_expenses_categoriesMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
@@ -1317,9 +1033,9 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_addActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            // TODO add your handling code here:
-            // change the get person id (get a login funct with person id)
+            // Get the logged-in user ID
             int loggedInUserId = loggedInUser.getId();
+            // Parse input values
             BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
             BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
             String description = txta_expenses_description.getText();
@@ -1327,8 +1043,7 @@ public class MainPage extends javax.swing.JFrame {
             int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
             Date date = Date.valueOf(txtf_expenses_date.getText());
 
-
-            //create expense object
+            // Create expense object
             Expenses expenses = new Expenses();
             expenses.setPerson_id(loggedInUserId);
             expenses.setCost(cost);
@@ -1338,7 +1053,7 @@ public class MainPage extends javax.swing.JFrame {
             expenses.setPayment_method_id(payment_method_id);
             expenses.setDate(date);
 
-            //add sql
+            // Insert the expense into the database
             dbFunction.insertExpense(expenses);
             JOptionPane.showMessageDialog(this, "Expense added successfully!");
             getExpensesData();
@@ -1354,8 +1069,8 @@ public class MainPage extends javax.swing.JFrame {
     private void btn_expenses_updateActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         try {
-            // change the get person id (get a login funct with person id)
-            int id = Integer.parseInt(txtf_expenses_id.getText());
+            // Parse input values
+            int expenseId = Integer.parseInt(txtf_expenses_id.getText());
             BigDecimal cost = new BigDecimal(txtf_expenses_cost.getText());
             BigDecimal amount = new BigDecimal(txtf_expenses_amount.getText());
             String description = txta_expenses_description.getText();
@@ -1363,10 +1078,9 @@ public class MainPage extends javax.swing.JFrame {
             int payment_method_id = cmbx_expenses_payment_methods.getSelectedIndex() + 1;
             Date date = Date.valueOf(txtf_expenses_date.getText());
 
-            //create expense object
+            // Create expense object
             Expenses expenses = new Expenses();
-            expenses.setId(id);
-            expenses.setPerson_id(loggedInUser.getId());
+            expenses.setId(expenseId);
             expenses.setCost(cost);
             expenses.setAmount(amount);
             expenses.setDescription(description);
@@ -1374,9 +1088,10 @@ public class MainPage extends javax.swing.JFrame {
             expenses.setPayment_method_id(payment_method_id);
             expenses.setDate(date);
 
-            //add sql
+            // Update the expense in the database
             dbFunction.updateExpense(expenses);
             JOptionPane.showMessageDialog(this, "Expense updated successfully!");
+            getExpensesData();
 
         } catch (DbConnectException | SQLException e) {
             e.printStackTrace();
@@ -1410,7 +1125,7 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_addMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-        btn_expenses_add.setBackground(new Color(98,194,242));
+        btn_expenses_add.setBackground(new Color(98, 194, 242));
 
     }
 
@@ -1421,7 +1136,7 @@ public class MainPage extends javax.swing.JFrame {
 
     private void btn_expenses_updateMouseExited(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-     btn_expenses_update.setBackground(new Color(226,165,165));
+        btn_expenses_update.setBackground(new Color(226, 165, 165));
     }
 
     private void btn_expenses_deleteMouseEntered(java.awt.event.MouseEvent evt) {
@@ -1433,6 +1148,7 @@ public class MainPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         btn_expenses_delete.setBackground(new Color(246, 26, 70));
     }
+
     private void btn_expenses_clearActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         btn_expenses_clear.setBackground(new Color(99, 99, 99));
@@ -1464,7 +1180,6 @@ public class MainPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         btn_expenses_clear.setBackground(new Color(204, 204, 204));
     }
-
 
 
     private void btn_expenses_searchActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1516,105 +1231,6 @@ public class MainPage extends javax.swing.JFrame {
     }
 
 
-    private void btn_expenses_detail_searchActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        String search = txtf_expenses_detail_search.getText();
-        try {
-            List<ExpensesDetails> expensesDetails = dbFunction.searchExpenseDetails(search);
-            updateTableExpensesDetail(expensesDetails);
-        } catch (DbConnectException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
-
-    private void rbtn_expenses_detail_ascActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        List<ExpensesDetails> expensesDetails = dbFunction.getExpensesDetailsSorted("asc");
-        updateTableExpensesDetail(expensesDetails);
-    }
-
-    private void rbtn_expenses_detail_descActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        List<ExpensesDetails> expensesDetails = dbFunction.getExpensesDetailsSorted("desc");
-        updateTableExpensesDetail(expensesDetails);
-    }
-
-    private void rbtn_expenses_detail_dateActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        List<ExpensesDetails> expensesDetails = dbFunction.getExpensesDetailsSorted("date");
-        updateTableExpensesDetail(expensesDetails);
-    }
-
-    private void btn_expenses_detail_updateMouseEntered(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        btn_expenses_detail_update.setBackground(new Color(12, 93, 166));
-    }
-
-    private void btn_expenses_detail_updateMouseExited(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        btn_expenses_detail_update.setBackground(new Color(98,194,242));
-    }
-
-    private void btn_expenses_detail_updateActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        String item = txta_expenses_detail_item.getText();
-
-        ExpensesDetails expensesDetails = new ExpensesDetails();
-        expensesDetails.setItem(item);
-        expensesDetails.setId(Integer.parseInt(txtf_expenses_detail_id.getText()));
-
-        try {
-            dbFunction.updateExpenseDetails(expensesDetails);
-            JOptionPane.showMessageDialog(this, "Expense detail updated successfully!");
-        } catch (DbConnectException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        getExpensesDetailsData();
-    }
-
-    private void btn_expenses_detail_deleteMouseEntered(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        int id = Integer.parseInt(txtf_expenses_detail_id.getText());
-
-    }
-
-    private void btn_expenses_detail_deleteMouseExited(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void btn_expenses_detail_deleteActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void btn_expenses_detail_clearMouseEntered(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        btn_expenses_detail_clear.setBackground(new Color(165, 163, 163));
-    }
-
-    private void btn_expenses_detail_clearMouseExited(java.awt.event.MouseEvent evt) {
-        // TODO add your handling code here:
-        btn_expenses_detail_clear.setBackground(new Color(204, 204, 204));
-
-    }
-
-    private void btn_expenses_detail_clearActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        tbl_expenses_detail.clearSelection();
-        txtf_expenses_detail_expenses_id.setText("");
-        txtf_expenses_detail_id.setText("");
-        txta_expenses_detail_item.setText("");
-        txtf_expenses_detail_cost.setText("");
-        txtf_expenses_detail_amount.setText("");
-
-
-    }
-
     /**
      * @param args the command line arguments
      */
@@ -1655,10 +1271,6 @@ public class MainPage extends javax.swing.JFrame {
     private javax.swing.JButton btn_expenses_add;
     private javax.swing.JButton btn_expenses_clear;
     private javax.swing.JButton btn_expenses_delete;
-    private javax.swing.JButton btn_expenses_detail_clear;
-    private javax.swing.JButton btn_expenses_detail_delete;
-    private javax.swing.JButton btn_expenses_detail_search;
-    private javax.swing.JButton btn_expenses_detail_update;
     private javax.swing.JButton btn_expenses_search;
     private javax.swing.JButton btn_expenses_update;
     private javax.swing.JButton btn_payment_methods_clear;
@@ -1670,11 +1282,9 @@ public class MainPage extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JLabel lbl_categories_categories;
     private javax.swing.JLabel lbl_categories_name;
     private javax.swing.JLabel lbl_expenses_amount;
@@ -1682,12 +1292,6 @@ public class MainPage extends javax.swing.JFrame {
     private javax.swing.JLabel lbl_expenses_cost;
     private javax.swing.JLabel lbl_expenses_date;
     private javax.swing.JLabel lbl_expenses_description;
-    private javax.swing.JLabel lbl_expenses_detail_amount;
-    private javax.swing.JLabel lbl_expenses_detail_cost;
-    private javax.swing.JLabel lbl_expenses_detail_expenses_id;
-    private javax.swing.JLabel lbl_expenses_detail_id;
-    private javax.swing.JLabel lbl_expenses_detail_item;
-    private javax.swing.JLabel lbl_expenses_detail_search;
     private javax.swing.JLabel lbl_expenses_id;
     private javax.swing.JLabel lbl_expenses_payment_method;
     private javax.swing.JLabel lbl_expenses_search;
@@ -1709,30 +1313,19 @@ public class MainPage extends javax.swing.JFrame {
     private javax.swing.JPanel pnl_all;
     private javax.swing.JPanel pnl_categories;
     private javax.swing.JPanel pnl_expenses;
-    private javax.swing.JPanel pnl_expenses_detail;
     private javax.swing.JPanel pnl_payment_methods;
     private javax.swing.JRadioButton rbtn_expenses_asc;
     private javax.swing.JRadioButton rbtn_expenses_date;
     private javax.swing.JRadioButton rbtn_expenses_desc;
-    private javax.swing.JRadioButton rbtn_expenses_detail_asc;
-    private javax.swing.JRadioButton rbtn_expenses_detail_date;
-    private javax.swing.JRadioButton rbtn_expenses_detail_desc;
     private javax.swing.JTabbedPane tbdp_db;
     private javax.swing.JTable tbl_expenses;
     private javax.swing.JTable tbl_expenses_categories;
-    private javax.swing.JTable tbl_expenses_detail;
     private javax.swing.JTable tbl_payment_methods;
     private javax.swing.JTextArea txta_expenses_description;
-    private javax.swing.JTextArea txta_expenses_detail_item;
     private javax.swing.JTextField txtf_categories_id;
     private javax.swing.JTextField txtf_expenses_amount;
     private javax.swing.JTextField txtf_expenses_cost;
     private javax.swing.JTextField txtf_expenses_date;
-    private javax.swing.JTextField txtf_expenses_detail_amount;
-    private javax.swing.JTextField txtf_expenses_detail_cost;
-    private javax.swing.JTextField txtf_expenses_detail_expenses_id;
-    private javax.swing.JTextField txtf_expenses_detail_id;
-    private javax.swing.JTextField txtf_expenses_detail_search;
     private javax.swing.JTextField txtf_expenses_id;
     private javax.swing.JTextField txtf_expenses_search;
     private javax.swing.JTextField txtf_payment_methods_id;

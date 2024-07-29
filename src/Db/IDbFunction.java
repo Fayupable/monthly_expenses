@@ -36,13 +36,6 @@ public interface IDbFunction {
 
 
     //Expenses Details
-    void updateExpenseDetails(ExpensesDetails expensesDetails) throws DbConnectException, SQLException;
-    void deleteExpenseDetails(ExpensesDetails expensesDetails) throws DbConnectException, SQLException;
-    List<ExpensesDetails> getExpenseDetails(int expenseId) throws DbConnectException, SQLException;
-    List<ExpensesDetails> searchExpenseDetails(String search) throws DbConnectException, SQLException;
-    List<ExpensesDetails> getExpenseDetails() throws DbConnectException, SQLException;
-    List<ExpensesDetails>  getExpensesDetailsSorted(String sortOrder) throws DbConnectException, SQLException;
-    List<ExpensesDetails> getExpensesDetailByPersonId(int personId) throws DbConnectException, SQLException;
 
 
 
