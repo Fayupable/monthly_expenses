@@ -1,3 +1,4 @@
+import Db.Csv.CreateCsv;
 import Db.DbFunction;
 import Db.Enum.ECategoryType;
 import Db.Enum.EPaymentMethods;
@@ -44,6 +45,15 @@ public class Main {
 //            }
 //        }
 
-
+//        CreateCsv createExcel = new CreateCsv();
+//        try {
+//            // Dizini ve dosya adını belirleyin
+//            String directoryPath = "/Users/pc/Desktop/code/Sql"; // Dizin yolu
+//            String fileName = "expenses.xlsx"; // Dosya adı
+//
+//            createExcel.exportExpensesToExcel(directoryPath, fileName);
+//        } catch (DbConnectException | SQLException | IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }
