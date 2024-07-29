@@ -74,49 +74,7 @@ CREATE TABLE Expenses (
 );
 
 ```
-**Expenses_Details**
-```
--- Create the Expenses_Details table
-CREATE TABLE Expenses_Details (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    expense_id INT,
-    item VARCHAR(100) NOT NULL,
-    amount DECIMAL(10,4) NOT NULL,
-    person_id INT NOT NULL,
-    FOREIGN KEY (person_id) REFERENCES Persons(id),
-    FOREIGN KEY (expense_id) REFERENCES Expenses(id)
-);
 
-```
-
-**Delimeter**
-```
-DELIMITER //
-
--- Create the after_expenses_insert trigger
-CREATE TRIGGER after_expenses_insert 
-AFTER INSERT ON Expenses 
-FOR EACH ROW 
-BEGIN 
-    INSERT INTO Expenses_Details (expense_id, item, amount, person_id) 
-    VALUES (NEW.id, '', NEW.amount, NEW.person_id);
-END; 
-//
-
--- Create the after_expenses_update trigger
-CREATE TRIGGER after_expenses_update 
-AFTER UPDATE ON Expenses 
-FOR EACH ROW 
-BEGIN 
-    INSERT INTO Expenses_Details (expense_id, item, amount, person_id) 
-    VALUES (NEW.id, '', NEW.amount, NEW.person_id);
-END; 
-//
-
--- Revert the delimiter
-DELIMITER ;
-
-```
 # **Usage**
 
 **DbConnector**
