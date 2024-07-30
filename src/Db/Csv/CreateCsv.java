@@ -57,15 +57,16 @@ public class CreateCsv {
 
             String filePath = downloadsDirectory + File.separator + fileName;
             try (PrintWriter csvWriter = new PrintWriter(new FileWriter(filePath))) {
-                csvWriter.println("ID,Amount,Category,Payment Method,Date,Description");
+                csvWriter.println("ID,Amount,Category,Payment Method,Cost,Description,Date");
 
                 while (resultSet.next()) {
                     csvWriter.println(resultSet.getInt("id") + "," +
                             resultSet.getDouble("amount") + "," +
                             resultSet.getString("category") + "," +
                             resultSet.getString("payment_method") + "," +
-                            resultSet.getTimestamp("date").toString() + "," +
-                            resultSet.getString("description"));
+                            resultSet.getBigDecimal("cost").doubleValue() + "," +
+                            resultSet.getString("description") + "," +
+                            resultSet.getTimestamp("date").toString());
                 }
 
                 System.out.println("CSV data has been exported to " + filePath);
@@ -91,8 +92,9 @@ public class CreateCsv {
             row.createCell(1).setCellValue("Amount");
             row.createCell(2).setCellValue("category_id");
             row.createCell(3).setCellValue("Payment_Method_id");
-            row.createCell(4).setCellValue("Date");
+            row.createCell(4).setCellValue("Cost");
             row.createCell(5).setCellValue("Description");
+            row.createCell(6).setCellValue("Date");
 
             while (resultSet.next()) {
                 rowNumber++;
@@ -101,8 +103,10 @@ public class CreateCsv {
                 row.createCell(1).setCellValue(resultSet.getDouble("amount"));
                 row.createCell(2).setCellValue(resultSet.getString("category_id"));
                 row.createCell(3).setCellValue(resultSet.getString("payment_method_id"));
-                row.createCell(4).setCellValue(resultSet.getTimestamp("date").toString());
+                row.createCell(4).setCellValue(resultSet.getBigDecimal("cost").doubleValue());
                 row.createCell(5).setCellValue(resultSet.getString("description"));
+                row.createCell(6).setCellValue(resultSet.getTimestamp("date").toString());
+
             }
 
             String filePath = downloadsDirectory + File.separator + fileName;
@@ -139,8 +143,9 @@ public class CreateCsv {
                     xmlWriter.println("    <Amount>" + resultSet.getDouble("amount") + "</Amount>");
                     xmlWriter.println("    <Category>" + resultSet.getString("category_id") + "</Category>");
                     xmlWriter.println("    <PaymentMethod>" + resultSet.getString("payment_method_id") + "</PaymentMethod>");
-                    xmlWriter.println("    <Date>" + resultSet.getTimestamp("date").toString() + "</Date>");
+                    xmlWriter.println("    <Cost>" + resultSet.getBigDecimal("cost").doubleValue() + "</Cost>");
                     xmlWriter.println("    <Description>" + resultSet.getString("description") + "</Description>");
+                    xmlWriter.println("    <Date>" + resultSet.getTimestamp("date").toString() + "</Date>");
                     xmlWriter.println("  </Expense>");
                 }
 

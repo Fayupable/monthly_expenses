@@ -896,10 +896,12 @@ public class MainPage extends javax.swing.JFrame {
         CreateCsv createData = new CreateCsv();
         String downloadsDirectory = createData.getUserDownloadsFolder();
         createData.exportExpensesToExcel(downloadsDirectory, "expenses.xlsx", personId);
+        JOptionPane.showMessageDialog(this, "Expenses exported to excel", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void menu_item_import_excelActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, "Import excel is not implemented yet", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void menu_item_export_xmlActionPerformed(java.awt.event.ActionEvent evt) {
@@ -908,11 +910,13 @@ public class MainPage extends javax.swing.JFrame {
         CreateCsv createData = new CreateCsv();
         String downloadsDirectory = createData.getUserDownloadsFolder();
         createData.exportExpensesToXml(downloadsDirectory, "expenses.xml", personId);
+        JOptionPane.showMessageDialog(this, "Exported to xml", "Info", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
     private void menu_item_import_xmlActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, "Import xml is not implemented yet", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
     private void menu_item_statisticActionPerformed(java.awt.event.ActionEvent evt) {
         try {
