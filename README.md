@@ -101,3 +101,32 @@ implementation 'mysql:mysql-connector-java:8.0.26'
 ```
 
 
+# **Modules**
+
+1. `DbConnector` - This module contains the database connection class that establishes a connection to the MySQL database server.
+2. `IDbFunctions` - This module contains the interface for the database functions class that defines the CRUD operations.
+3. `DbFunctions` - This module contains the database functions class that performs CRUD operations on the database tables.
+4. `Tables Package` - This package contains the classes for the database tables (Persons, Categories, Payment_Methods, Expenses).
+5. `Enum Package` - This package contains the enum classes for the person type, category type, and payment method type.
+6. `Csv Package` - This package contains the classes for reading and writing Excel,Csv and Xml files.
+7. `UI Package` - This package contains the classes for the user interface (CLI) to interact with the application.
+8. `Login Page` - This module contains the login page class that authenticates the user login credentials.
+9. `Main Page` - This module contains the main page class that displays the menu options for the user to interact with the application.
+10. `SignUp Page` - This module contains the sign-up page class that allows new users to create an account.
+
+
+# **Contributing**
+
+1. Fork the repository
+2. Clone the repository
+3. Create a new branch
+4. Make necessary changes and commit those changes
+5. Push changes to GitHub
+6. Submit your changes for review
+7. If your changes are approved, they will be merged into the main branch
+8. If you have any questions, feel free to contact us at
+9. Happy coding! :)
+10. Thank you for your contribution!
+
+
+
