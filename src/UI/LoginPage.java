@@ -20,11 +20,14 @@ public class LoginPage extends javax.swing.JFrame {
      */
     public LoginPage() {
         initComponents();
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         dbFunction = new DbFunction();
         person = new Persons();
         this.setResizable(false);
         txtf_e_mail.setText("enisyaman4@gmail.com");
         pswrdf_password.setText("1");
+
 
 
     }
@@ -181,6 +184,10 @@ public class LoginPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         person.setE_mail(txtf_e_mail.getText());
         person.setPassword(pswrdf_password.getText());
+        if(person.getE_mail().isEmpty() || person.getPassword().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please fill all fields");
+            return;
+        }
         try {
             int personId = dbFunction.login(person);
             if (personId != 0) {

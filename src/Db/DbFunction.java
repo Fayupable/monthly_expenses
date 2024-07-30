@@ -23,6 +23,13 @@ public class DbFunction implements IDbFunction {
     //Login
     private static final String login_query = "SELECT * FROM persons WHERE e_mail = ? AND password = ?";
 
+    //Statistics
+    private static final String get_total_expenses_query = "SELECT SUM(cost) FROM expenses WHERE person_id = ?";
+    private static final String get_avarage_expenses_query = "SELECT AVG(cost) FROM expenses WHERE person_id = ?";
+    private static final String get_max_expenses_query = "SELECT MAX(cost) FROM expenses WHERE person_id = ?";
+    private static final String get_min_expenses_query = "SELECT MIN(cost) FROM expenses WHERE person_id = ?";
+
+
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
     private static final String get_persons_by_id_query = "SELECT * FROM persons WHERE id = ?";
@@ -53,7 +60,6 @@ public class DbFunction implements IDbFunction {
     private static final String filter_asc_expenses_query = "SELECT * FROM expenses ORDER BY cost ASC";
     private static final String filter_desc_expenses_query = "SELECT * FROM expenses ORDER BY cost DESC";
     private static final String filter_date_expenses_query = "SELECT * FROM expenses ORDER BY date";
-
 
 
     @Override
@@ -105,7 +111,95 @@ public class DbFunction implements IDbFunction {
         return -1;
     }
 
+    @Override
+    public List<Expenses> getStatistics(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
+        try {
+            conn = DbConnector.getConnection();
+
+            // Get total expenses
+            ps = conn.prepareStatement(get_total_expenses_query);
+            ps.setInt(1, personId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Expenses totalExpenses = new Expenses();
+                totalExpenses.setDescription("Total Expenses");
+                totalExpenses.setCost(rs.getBigDecimal(1));
+                expensesList.add(totalExpenses);
+            }
+            rs.close();
+            ps.close();
+
+            // Get average expenses
+            ps = conn.prepareStatement(get_avarage_expenses_query);
+            ps.setInt(1, personId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Expenses avgExpenses = new Expenses();
+                avgExpenses.setDescription("Average Expenses");
+                avgExpenses.setCost(rs.getBigDecimal(1));
+                expensesList.add(avgExpenses);
+            }
+            rs.close();
+            ps.close();
+
+            // Get max expenses
+            ps = conn.prepareStatement(get_max_expenses_query);
+            ps.setInt(1, personId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Expenses maxExpenses = new Expenses();
+                maxExpenses.setDescription("Max Expenses");
+                maxExpenses.setCost(rs.getBigDecimal(1));
+                expensesList.add(maxExpenses);
+            }
+            rs.close();
+            ps.close();
+
+            // Get min expenses
+            ps = conn.prepareStatement(get_min_expenses_query);
+            ps.setInt(1, personId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Expenses minExpenses = new Expenses();
+                minExpenses.setDescription("Min Expenses");
+                minExpenses.setCost(rs.getBigDecimal(1));
+                expensesList.add(minExpenses);
+            }
+            rs.close();
+            ps.close();
+
+        } catch (SQLException e) {
+            throw new DbConnectException("Failed to get statistics: " + e.getMessage(), e);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return expensesList;
+    }
     //Persons
     @Override
     public void insertPerson(Persons person) throws DbConnectException, SQLException {

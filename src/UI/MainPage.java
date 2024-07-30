@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainPage extends javax.swing.JFrame {
@@ -45,7 +46,8 @@ public class MainPage extends javax.swing.JFrame {
         this.createData = new CreateCsv();
         dbFunction = new DbFunction();
         initComponents();
-
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         expenses = new Expenses();
         this.model = new DefaultTableModel();
         txtf_expenses_date.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis())));
@@ -749,6 +751,10 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_fileMouseEntered(evt);
             }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_fileMouseExited(evt);
+            }
         });
 
         menu_item_export_excel.setText("Export Excel");
@@ -794,6 +800,10 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_editMouseEntered(evt);
             }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_editMouseExited(evt);
+            }
         });
 
         menu_item_profile.setText("Profile");
@@ -806,6 +816,11 @@ public class MainPage extends javax.swing.JFrame {
 
         menu_item_statistic.setText("Statistic");
         menu_edit.add(menu_item_statistic);
+        menu_item_statistic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menu_item_statisticActionPerformed(evt);
+            }
+        });
 
         jMenuBar1.add(menu_edit);
 
@@ -817,6 +832,10 @@ public class MainPage extends javax.swing.JFrame {
 
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_categoriesMouseEntered(evt);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_categoriesMouseExited(evt);
             }
         });
         jMenuBar1.add(menu_categories);
@@ -830,6 +849,10 @@ public class MainPage extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_expenses_detailMouseEntered(evt);
             }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_expenses_detailMouseExited(evt);
+            }
         });
         jMenuBar1.add(menu_expenses_detail);
 
@@ -841,6 +864,10 @@ public class MainPage extends javax.swing.JFrame {
 
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 menu_payment_methodsMouseEntered(evt);
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_payment_methodsMouseExited(evt);
             }
         });
         jMenuBar1.add(menu_payment_methods);
@@ -887,6 +914,25 @@ public class MainPage extends javax.swing.JFrame {
     private void menu_item_import_xmlActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
+    private void menu_item_statisticActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int personId = loggedInUser.getId();
+            List<Expenses> statistics = dbFunction.getStatistics(personId);
+
+            StringBuilder statsMessage = new StringBuilder();
+            statsMessage.append("Statistics:\n");
+
+            for (Expenses expense : statistics) {
+                statsMessage.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, statsMessage.toString(), "Statistics", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (DbConnectException | SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to retrieve statistics: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     private void tbdp_dbStateChanged(javax.swing.event.ChangeEvent evt) {
         // TODO add your handling code here:
@@ -914,7 +960,6 @@ public class MainPage extends javax.swing.JFrame {
 
     private void pnl_expensesMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
-
     }
 
     private void tbdp_dbMouseEntered(java.awt.event.MouseEvent evt) {
@@ -993,23 +1038,73 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_payment_methodsMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        menu_payment_methods.setBackground(new Color(92, 92, 92));
+        menu_payment_methods.setOpaque(true);
     }
 
     private void menu_expenses_detailMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        menu_expenses_detail.setBackground(new Color(92, 92, 92));
+        menu_expenses_detail.setOpaque(true);
+
     }
 
     private void menu_categoriesMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        menu_categories.setBackground(new Color(92, 92, 92));
+        menu_categories.setOpaque(true);
+
     }
 
     private void menu_editMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        menu_edit.setBackground(new Color(92, 92, 92));
+        menu_edit.setOpaque(true);
+
     }
 
     private void menu_fileMouseEntered(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        menu_file.setBackground(new Color(92, 92, 92));
+        menu_file.setOpaque(true);
+
     }
+
+    private void menu_fileMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        menu_file.setBackground(new Color(240, 240, 240));
+        menu_file.setOpaque(false);
+
+    }
+
+    private void menu_editMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        menu_edit.setBackground(new Color(240, 240, 240));
+        menu_edit.setOpaque(false);
+    }
+
+    private void menu_categoriesMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        menu_categories.setBackground(new Color(240, 240, 240));
+        menu_categories.setOpaque(false);
+
+    }
+
+    private void menu_expenses_detailMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        menu_expenses_detail.setBackground(new Color(240, 240, 240));
+        menu_expenses_detail.setOpaque(false);
+
+    }
+
+    private void menu_payment_methodsMouseExited(java.awt.event.MouseEvent evt) {
+        // TODO add your handling code here:
+        menu_payment_methods.setBackground(new Color(240, 240, 240));
+        menu_payment_methods.setOpaque(false);
+
+
+    }
+
 
     private void menu_editMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
@@ -1017,6 +1112,11 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_categoriesMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        List<ECategoryType> categoryTypes = new ArrayList<>();
+        for (ECategoryType categoryType : ECategoryType.values()) {
+            categoryTypes.add(categoryType);
+        }
+        JOptionPane.showMessageDialog(this, categoryTypes);
     }
 
     private void menu_expenses_detailMouseClicked(java.awt.event.MouseEvent evt) {
@@ -1025,6 +1125,12 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_payment_methodsMouseClicked(java.awt.event.MouseEvent evt) {
         // TODO add your handling code here:
+        //get all payment enums
+        List<EPaymentMethods> paymentMethods = new ArrayList<>();
+        for (EPaymentMethods paymentMethod : EPaymentMethods.values()) {
+            paymentMethods.add(paymentMethod);
+        }
+        JOptionPane.showMessageDialog(this, paymentMethods);
     }
 
     private void menu_item_profileActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1110,6 +1216,7 @@ public class MainPage extends javax.swing.JFrame {
 
             dbFunction.deleteExpense(expenses);
             JOptionPane.showMessageDialog(this, "Expense deleted successfully!");
+            getExpensesData();
         } catch (DbConnectException | SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to delete expense: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

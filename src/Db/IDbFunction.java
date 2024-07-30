@@ -33,15 +33,6 @@ public interface IDbFunction {
     List<Expenses> getExpensesSorted(String sortOrder) throws DbConnectException, SQLException;
 
 
-
-
-    //Expenses Details
-
-
-
-
-
-
     //Payment Methods
     void insertPaymentMethod(PaymentMethods paymentMethods) throws DbConnectException, SQLException;
     void updatePaymentMethod(PaymentMethods paymentMethods) throws DbConnectException, SQLException;
@@ -49,9 +40,8 @@ public interface IDbFunction {
     List<PaymentMethods> getPaymentMethods() throws DbConnectException, SQLException;
     List<PaymentMethods> searchPaymentMethods(String search) throws DbConnectException, SQLException;
 
-
-
-
+    //Statistics
+List<Expenses> getStatistics(int personId) throws DbConnectException, SQLException;
 
 
 
