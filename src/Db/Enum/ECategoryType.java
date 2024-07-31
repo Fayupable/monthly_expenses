@@ -17,6 +17,14 @@ public enum ECategoryType {
     SPOR(14),
     KIRTASIYE(15),
     HEDIYE(16),
+    BILGISAYAR(17),
+    TELEFON(18),
+    INTERNET(19),
+    ELEKTRIK(20),
+    SU(21),
+    DOGALGAZ(22),
+    KIRA(23),
+
     DIGER(99);
 
     private final int id;

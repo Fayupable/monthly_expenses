@@ -11,6 +11,7 @@ public interface IDbFunction {
     int login(Persons person) throws DbConnectException, SQLException;
     void insertPerson(Persons person) throws DbConnectException, SQLException;
     Persons getPersonsById(int id) throws DbConnectException, SQLException;
+    boolean updatePerson(Persons person) throws DbConnectException, SQLException;
 
 
 

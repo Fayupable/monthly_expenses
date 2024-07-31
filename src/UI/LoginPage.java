@@ -190,7 +190,7 @@ public class LoginPage extends javax.swing.JFrame {
         }
         try {
             int personId = dbFunction.login(person);
-            if (personId != 0) {
+            if (personId != -1) {
                 JOptionPane.showMessageDialog(null, "Login Successful");
                 this.person = dbFunction.getPersonsById(person.getId());
                 MainPage mainPage = new MainPage(this.person);

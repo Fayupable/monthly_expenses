@@ -28,11 +28,13 @@ public class DbFunction implements IDbFunction {
     private static final String get_avarage_expenses_query = "SELECT AVG(cost) FROM expenses WHERE person_id = ?";
     private static final String get_max_expenses_query = "SELECT MAX(cost) FROM expenses WHERE person_id = ?";
     private static final String get_min_expenses_query = "SELECT MIN(cost) FROM expenses WHERE person_id = ?";
+    private static final String get_between_recent_oldest_expenses_query= "SELECT MIN(date) AS oldest_date, MAX(date) AS newest_date FROM expenses WHERE person_id = ?";
 
 
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
     private static final String get_persons_by_id_query = "SELECT * FROM persons WHERE id = ?";
+    private static final String update_person_query = "UPDATE persons SET name = ?, e_mail = ?, password = ? WHERE id = ?";
 
     //Payment Methods
     private static final String insert_payment_method_query = "INSERT INTO payment_methods (name) VALUES (?)";
@@ -120,6 +122,22 @@ public class DbFunction implements IDbFunction {
 
         try {
             conn = DbConnector.getConnection();
+
+            // Get between recent and oldest date
+            ps = conn.prepareStatement(get_between_recent_oldest_expenses_query);
+            ps.setInt(1, personId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                java.sql.Date oldestDate = rs.getDate("oldest_date");
+                java.sql.Date newestDate = rs.getDate("newest_date");
+
+                //write a null? i will fix it
+                Expenses dateRangeExpenses = new Expenses();
+                dateRangeExpenses.setDescription("between: " + oldestDate + " and " + newestDate);
+                expensesList.add(dateRangeExpenses);
+            }
+
+
 
             // Get total expenses
             ps = conn.prepareStatement(get_total_expenses_query);
@@ -265,6 +283,32 @@ public class DbFunction implements IDbFunction {
         }
         return person;
 
+    }
+
+    @Override
+    public boolean updatePerson(Persons person) throws DbConnectException, SQLException {
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(update_person_query);
+        ps.setString(1, person.getName());
+        ps.setString(2, person.getE_mail());
+        ps.setString(3, person.getPassword());
+        ps.setInt(4, person.getId());
+        ps.executeUpdate();
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     @Override

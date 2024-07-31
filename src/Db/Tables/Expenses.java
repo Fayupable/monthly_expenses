@@ -16,6 +16,7 @@ public class Expenses implements Comparable<Expenses> {
     private int payment_method_id;
     private Date date;
 
+
     public Expenses() {
     }
 

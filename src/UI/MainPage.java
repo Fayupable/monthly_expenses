@@ -1139,6 +1139,9 @@ public class MainPage extends javax.swing.JFrame {
 
     private void menu_item_profileActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        EditPage editPage = new EditPage(loggedInUser);
+        editPage.setVisible(true);
+        this.setVisible(false);
     }
 
     private void btn_expenses_addActionPerformed(java.awt.event.ActionEvent evt) {
