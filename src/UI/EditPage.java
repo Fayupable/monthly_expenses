@@ -29,6 +29,8 @@ public class EditPage extends javax.swing.JFrame {
         txtf_edit_page_e_mail.setText(loggedInUser.getE_mail());
         txtf_edit_page_person_type.setText(String.valueOf(loggedInUser.getPerson_type()));
         txtf_edit_page_created_at.setText(loggedInUser.getCreated_at().toString());
+        txtf_edit_page_created_at.setEditable(false);
+        txtf_edit_page_person_type.setEditable(false);
     }
 
     /**
