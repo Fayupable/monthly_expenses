@@ -927,7 +927,11 @@ public class MainPage extends javax.swing.JFrame {
             statsMessage.append("Statistics:\n");
 
             for (Expenses expense : statistics) {
-                statsMessage.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
+                if (expense.getDescription().startsWith("Statistics between:")) {
+                    statsMessage.append(expense.getDescription()).append("\n");
+                } else {
+                    statsMessage.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
+                }
             }
 
             JOptionPane.showMessageDialog(this, statsMessage.toString(), "Statistics", JOptionPane.INFORMATION_MESSAGE);

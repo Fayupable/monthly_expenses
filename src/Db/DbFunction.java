@@ -131,9 +131,8 @@ public class DbFunction implements IDbFunction {
                 java.sql.Date oldestDate = rs.getDate("oldest_date");
                 java.sql.Date newestDate = rs.getDate("newest_date");
 
-                //write a null? i will fix it
                 Expenses dateRangeExpenses = new Expenses();
-                dateRangeExpenses.setDescription("between: " + oldestDate + " and " + newestDate);
+                dateRangeExpenses.setDescription("Statistics between: " + oldestDate + " and " + newestDate);
                 expensesList.add(dateRangeExpenses);
             }
 
