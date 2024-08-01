@@ -919,27 +919,27 @@ public class MainPage extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Import xml is not implemented yet", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
     private void menu_item_statisticActionPerformed(java.awt.event.ActionEvent evt) {
-        try {
-            int personId = loggedInUser.getId();
-            List<Expenses> statistics = dbFunction.getStatistics(personId);
-
-            StringBuilder statsMessage = new StringBuilder();
-            statsMessage.append("Statistics:\n");
-
-            for (Expenses expense : statistics) {
-                if (expense.getDescription().startsWith("Statistics between:")) {
-                    statsMessage.append(expense.getDescription()).append("\n");
-                } else {
-                    statsMessage.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
-                }
-            }
-
-            JOptionPane.showMessageDialog(this, statsMessage.toString(), "Statistics", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (DbConnectException | SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to retrieve statistics: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+//        try {
+//            int personId = loggedInUser.getId();
+//            List<Expenses> statistics = dbFunction.getStatistics(personId);
+//
+//            StringBuilder statsMessage = new StringBuilder();
+//            statsMessage.append("Statistics:\n");
+//
+//            for (Expenses expense : statistics) {
+//                if (expense.getDescription().startsWith("Statistics between:")) {
+//                    statsMessage.append(expense.getDescription()).append("\n");
+//                } else {
+//                    statsMessage.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
+//                }
+//            }
+//
+//            JOptionPane.showMessageDialog(this, statsMessage.toString(), "Statistics", JOptionPane.INFORMATION_MESSAGE);
+//
+//        } catch (DbConnectException | SQLException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, "Failed to retrieve statistics: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
     private void tbdp_dbStateChanged(javax.swing.event.ChangeEvent evt) {

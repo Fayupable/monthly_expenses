@@ -24,7 +24,13 @@ public enum ECategoryType {
     SU(21),
     DOGALGAZ(22),
     KIRA(23),
-
+    EVCILHAYVAN(24),
+    ISYERI(25),
+    KISISELGELISIM(26),
+    SEYAHAT(27),
+    KONAKLAMA(28),
+    IS(29),
+    ABONELIKLER(30),
     DIGER(99);
 
     private final int id;

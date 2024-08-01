@@ -28,8 +28,14 @@ public class DbFunction implements IDbFunction {
     private static final String get_avarage_expenses_query = "SELECT AVG(cost) FROM expenses WHERE person_id = ?";
     private static final String get_max_expenses_query = "SELECT MAX(cost) FROM expenses WHERE person_id = ?";
     private static final String get_min_expenses_query = "SELECT MIN(cost) FROM expenses WHERE person_id = ?";
-    private static final String get_between_recent_oldest_expenses_query= "SELECT MIN(date) AS oldest_date, MAX(date) AS newest_date FROM expenses WHERE person_id = ?";
-
+    private static final String get_between_recent_oldest_expenses_query = "SELECT MIN(date) AS oldest_date, MAX(date) AS newest_date FROM expenses WHERE person_id = ?";
+    private static final String get_between_date_get_date_from_user_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_total_expenses_between_dates_query = "SELECT SUM(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_avg_expenses_between_dates_query = "SELECT AVG(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_max_expenses_between_dates_query = "SELECT MAX(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_min_expenses_between_dates_query = "SELECT MIN(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_between_dates_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
+    private static final String get_statistics_between_dates_category_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
 
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
@@ -116,107 +122,386 @@ public class DbFunction implements IDbFunction {
     @Override
     public List<Expenses> getStatistics(int personId) throws DbConnectException, SQLException {
         List<Expenses> expensesList = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            conn = DbConnector.getConnection();
+//
+//            // Get between recent and oldest date
+//            ps = conn.prepareStatement(get_between_recent_oldest_expenses_query);
+//            ps.setInt(1, personId);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                java.sql.Date oldestDate = rs.getDate("oldest_date");
+//                java.sql.Date newestDate = rs.getDate("newest_date");
+//
+//                Expenses dateRangeExpenses = new Expenses();
+//                dateRangeExpenses.setDescription("Statistics between: " + oldestDate + " and " + newestDate);
+//                expensesList.add(dateRangeExpenses);
+//            }
+//
+//
+//
+//            // Get total expenses
+//            ps = conn.prepareStatement(get_total_expenses_query);
+//            ps.setInt(1, personId);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                Expenses totalExpenses = new Expenses();
+//                totalExpenses.setDescription("Total Expenses");
+//                totalExpenses.setCost(rs.getBigDecimal(1));
+//                expensesList.add(totalExpenses);
+//            }
+//            rs.close();
+//            ps.close();
+//
+//            // Get average expenses
+//            ps = conn.prepareStatement(get_avarage_expenses_query);
+//            ps.setInt(1, personId);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                Expenses avgExpenses = new Expenses();
+//                avgExpenses.setDescription("Average Expenses");
+//                avgExpenses.setCost(rs.getBigDecimal(1));
+//                expensesList.add(avgExpenses);
+//            }
+//            rs.close();
+//            ps.close();
+//
+//            // Get max expenses
+//            ps = conn.prepareStatement(get_max_expenses_query);
+//            ps.setInt(1, personId);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                Expenses maxExpenses = new Expenses();
+//                maxExpenses.setDescription("Max Expenses");
+//                maxExpenses.setCost(rs.getBigDecimal(1));
+//                expensesList.add(maxExpenses);
+//            }
+//            rs.close();
+//            ps.close();
+//
+//            // Get min expenses
+//            ps = conn.prepareStatement(get_min_expenses_query);
+//            ps.setInt(1, personId);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                Expenses minExpenses = new Expenses();
+//                minExpenses.setDescription("Min Expenses");
+//                minExpenses.setCost(rs.getBigDecimal(1));
+//                expensesList.add(minExpenses);
+//            }
+//            rs.close();
+//            ps.close();
+//
+//        } catch (SQLException e) {
+//            throw new DbConnectException("Failed to get statistics: " + e.getMessage(), e);
+//        } finally {
+//            if (rs != null) {
+//                try {
+//                    rs.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (ps != null) {
+//                try {
+//                    ps.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if (conn != null) {
+//                try {
+//                    conn.close();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+        return expensesList;
+    }
 
-        try {
-            conn = DbConnector.getConnection();
-
-            // Get between recent and oldest date
-            ps = conn.prepareStatement(get_between_recent_oldest_expenses_query);
-            ps.setInt(1, personId);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                java.sql.Date oldestDate = rs.getDate("oldest_date");
-                java.sql.Date newestDate = rs.getDate("newest_date");
-
-                Expenses dateRangeExpenses = new Expenses();
-                dateRangeExpenses.setDescription("Statistics between: " + oldestDate + " and " + newestDate);
-                expensesList.add(dateRangeExpenses);
+    public List<Expenses> getTotalExpenses(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_total_expenses_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses totalExpenses = new Expenses();
+            totalExpenses.setDescription("Total Expenses");
+            totalExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(totalExpenses);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-
-
-            // Get total expenses
-            ps = conn.prepareStatement(get_total_expenses_query);
-            ps.setInt(1, personId);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                Expenses totalExpenses = new Expenses();
-                totalExpenses.setDescription("Total Expenses");
-                totalExpenses.setCost(rs.getBigDecimal(1));
-                expensesList.add(totalExpenses);
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            rs.close();
-            ps.close();
+        }
+        return expensesList;
 
-            // Get average expenses
-            ps = conn.prepareStatement(get_avarage_expenses_query);
-            ps.setInt(1, personId);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                Expenses avgExpenses = new Expenses();
-                avgExpenses.setDescription("Average Expenses");
-                avgExpenses.setCost(rs.getBigDecimal(1));
-                expensesList.add(avgExpenses);
-            }
-            rs.close();
-            ps.close();
+    }
 
-            // Get max expenses
-            ps = conn.prepareStatement(get_max_expenses_query);
-            ps.setInt(1, personId);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                Expenses maxExpenses = new Expenses();
-                maxExpenses.setDescription("Max Expenses");
-                maxExpenses.setCost(rs.getBigDecimal(1));
-                expensesList.add(maxExpenses);
-            }
-            rs.close();
-            ps.close();
 
-            // Get min expenses
-            ps = conn.prepareStatement(get_min_expenses_query);
-            ps.setInt(1, personId);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                Expenses minExpenses = new Expenses();
-                minExpenses.setDescription("Min Expenses");
-                minExpenses.setCost(rs.getBigDecimal(1));
-                expensesList.add(minExpenses);
+    public List<Expenses> getAvarageExpenses(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_avarage_expenses_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses avgExpenses = new Expenses();
+            avgExpenses.setDescription("Average Expenses");
+            avgExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(avgExpenses);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            rs.close();
-            ps.close();
-
-        } catch (SQLException e) {
-            throw new DbConnectException("Failed to get statistics: " + e.getMessage(), e);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return expensesList;
     }
+
+    public List<Expenses> getMaxExpenses(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_max_expenses_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses maxExpenses = new Expenses();
+            maxExpenses.setDescription("Max Expenses");
+            maxExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(maxExpenses);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getMinExpenses(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_min_expenses_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses minExpenses = new Expenses();
+            minExpenses.setDescription("Min Expenses");
+            minExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(minExpenses);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getBetweenRecentOldestExpenses(int personId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_between_recent_oldest_expenses_query);
+        ps.setInt(1, personId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            java.sql.Date oldestDate = rs.getDate("oldest_date");
+            java.sql.Date newestDate = rs.getDate("newest_date");
+            Expenses dateRangeExpenses = new Expenses();
+            dateRangeExpenses.setDescription("Statistics between: " + oldestDate + " and " + newestDate);
+            expensesList.add(dateRangeExpenses);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getBetweenDateGetDateFromUser(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_between_date_get_date_from_user_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expensesList.add(expense);
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getStatisticsTotalExpensesBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_total_expenses_between_dates_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses totalExpenses = new Expenses();
+            totalExpenses.setDescription("Total Expenses Between Dates");
+            totalExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(totalExpenses);
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getStatisticsAvgExpensesBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_avg_expenses_between_dates_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses avgExpenses = new Expenses();
+            avgExpenses.setDescription("Average Expenses Between Dates");
+            avgExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(avgExpenses);
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getStatisticsMaxExpensesBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_max_expenses_between_dates_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses maxExpenses = new Expenses();
+            maxExpenses.setDescription("Max Expenses Between Dates");
+            maxExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(maxExpenses);
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getStatisticsMinExpensesBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_min_expenses_between_dates_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses minExpenses = new Expenses();
+            minExpenses.setDescription("Min Expenses Between Dates");
+            minExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(minExpenses);
+        }
+        return expensesList;
+    }
+
+    public List<Expenses> getStatisticsBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_between_dates_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expensesList.add(expense);
+        }
+        return expensesList;
+    }
+
+
+
     //Persons
     @Override
     public void insertPerson(Persons person) throws DbConnectException, SQLException {

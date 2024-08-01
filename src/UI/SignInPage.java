@@ -28,8 +28,7 @@ public class SignInPage extends javax.swing.JFrame {
         dbFunction = new DbFunction();
         person = new Persons();
         loginPage = new LoginPage();
-
-    }
+        this.setLocationRelativeTo(null);    }
 
     /**
      * This method is called from within the constructor to
