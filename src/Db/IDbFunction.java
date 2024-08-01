@@ -83,5 +83,8 @@ public interface IDbFunction {
 
     public List<Expenses> getStatisticsTotalExpensesBetweenDates(int personId, Date startDate, Date endDate) throws DbConnectException, SQLException;
 
+    public List<Expenses> getStatisticsBetweenDatesCategory(int personId, Date startDate, Date endDate, int categoryId) throws DbConnectException, SQLException;
+
+    public List<Expenses> getStatisticsAll(int personId) throws DbConnectException, SQLException;
 
 }

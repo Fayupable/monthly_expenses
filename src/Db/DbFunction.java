@@ -1,10 +1,12 @@
 package Db;
 
 import Bst.AvlTree;
+import Db.Enum.ECategoryType;
 import Db.Enum.EPaymentMethods;
 import Db.Enum.EPersonType;
 import Db.Exception.*;
 import Db.Tables.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class DbFunction implements IDbFunction {
@@ -36,6 +39,7 @@ public class DbFunction implements IDbFunction {
     private static final String get_statistics_min_expenses_between_dates_query = "SELECT MIN(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
     private static final String get_statistics_between_dates_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
     private static final String get_statistics_between_dates_category_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+    private static final String get_statistics_expenses_between_dates_by_category_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
 
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
@@ -122,6 +126,11 @@ public class DbFunction implements IDbFunction {
     @Override
     public List<Expenses> getStatistics(int personId) throws DbConnectException, SQLException {
         List<Expenses> expensesList = new ArrayList<>();
+        expensesList.addAll(getTotalExpenses(personId));
+        expensesList.addAll(getAvarageExpenses(personId));
+        expensesList.addAll(getMaxExpenses(personId));
+        expensesList.addAll(getMinExpenses(personId));
+        expensesList.addAll(getBetweenRecentOldestExpenses(personId));
 //        Connection conn = null;
 //        PreparedStatement ps = null;
 //        ResultSet rs = null;
@@ -223,6 +232,38 @@ public class DbFunction implements IDbFunction {
 //        }
         return expensesList;
     }
+
+    @Override
+    public List<Expenses> getStatisticsAll(int personId) throws DbConnectException, SQLException {
+        return getStatistics(personId);
+
+    }
+    public Collection<? extends Expenses> getStatisticsExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_expenses_between_dates_by_category_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, date1);
+        ps.setDate(3, date2);
+        ps.setInt(4, categoryType.getId());
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expensesList.add(expense);
+        }
+        return expensesList;
+
+
+    }
+
 
     public List<Expenses> getTotalExpenses(int personId) throws DbConnectException, SQLException {
         List<Expenses> expensesList = new ArrayList<>();
@@ -500,7 +541,29 @@ public class DbFunction implements IDbFunction {
         return expensesList;
     }
 
-
+    public List<Expenses> getStatisticsBetweenDatesCategory(int personId, Date startDate, Date endDate, int categoryId) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_between_dates_category_query);
+        ps.setInt(1, personId);
+        ps.setDate(2, startDate);
+        ps.setDate(3, endDate);
+        ps.setInt(4, categoryId);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Expenses expense = new Expenses();
+            expense.setId(rs.getInt("id"));
+            expense.setPerson_id(rs.getInt("person_id"));
+            expense.setCost(rs.getBigDecimal("cost"));
+            expense.setAmount(rs.getBigDecimal("amount"));
+            expense.setDescription(rs.getString("description"));
+            expense.setCategory_id(rs.getInt("category_id"));
+            expense.setPayment_method_id(rs.getInt("payment_method_id"));
+            expense.setDate(rs.getDate("date"));
+            expensesList.add(expense);
+        }
+        return expensesList;
+    }
 
     //Persons
     @Override
@@ -1149,3 +1212,6 @@ public class DbFunction implements IDbFunction {
     }
 
 }
+
+
+

@@ -4,12 +4,18 @@ package UI;
 import Db.DbFunction;
 import Db.Enum.ECategoryType;
 import Db.Enum.EPaymentMethods;
+import Db.Exception.DbConnectException;
+import Db.Tables.Expenses;
 
+import javax.swing.*;
+import java.awt.*;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author pc
  */
 public class Statistic extends javax.swing.JFrame {
@@ -29,6 +35,7 @@ public class Statistic extends javax.swing.JFrame {
         cmbx_statistic_category.setSelectedItem(null);
 
     }
+
     private void set_categories_combobox() {
         cmbx_statistic_category.removeAllItems();
         try {
@@ -39,6 +46,7 @@ public class Statistic extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -110,7 +118,7 @@ public class Statistic extends javax.swing.JFrame {
 
         lbl_statistic_category_cmbx.setText("Category");
 
-        cmbx_statistic_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbx_statistic_category.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"}));
 
         btn_statistic_clear.setText("Clear");
         btn_statistic_clear.addActionListener(new java.awt.event.ActionListener() {
@@ -205,8 +213,55 @@ public class Statistic extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void btn_statistic_showActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        int personId = 1; // Gerçek kişi kimliğini burada belirleyin
+        List<Expenses> expensesList = new ArrayList<>();
+        DbFunction dbFunctions = new DbFunction();
 
+        Date date1 = Date.valueOf(txtf_statistic_date1.getText());
+        Date date2 = Date.valueOf(txtf_statistic_date2.getText());
+
+        String category = cmbx_statistic_category.getSelectedItem() == null ? null : cmbx_statistic_category.getSelectedItem().toString();
+
+        if (category != null){
+            ECategoryType categoryType = ECategoryType.valueOf(category);
+            try {
+                expensesList.addAll(dbFunctions.getStatisticsExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
+            } catch (DbConnectException | SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+
+//        try {
+//            if (rbtn_statistic_total_expenses.isSelected()) {
+//                expensesList.addAll(dbFunctions.getStatisticsTotalExpensesBetweenDates(personId, date1, date2));
+//            }
+//            if (rbtn_statistic_avarage_expenses.isSelected()) {
+//                expensesList.addAll(dbFunctions.getStatisticsAvgExpensesBetweenDates(personId, date1, date2));
+//            }
+//            if (rbtn_statistic_max_expenses.isSelected()) {
+//                expensesList.addAll(dbFunctions.getStatisticsMaxExpensesBetweenDates(personId, date1, date2));
+//            }
+//            if (rbtn_statistic_min_expenses.isSelected()) {
+//                expensesList.addAll(dbFunctions.getStatisticsMinExpensesBetweenDates(personId, date1, date2));
+//            }
+//        } catch (DbConnectException | SQLException e) {
+//            e.printStackTrace();
+//        }
+
+        if (!expensesList.isEmpty()) {
+            StringBuilder result = new StringBuilder();
+            for (Expenses expense : expensesList) {
+                result.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
+            }
+            JOptionPane.showMessageDialog(this, result.toString(), "Result", JOptionPane.INFORMATION_MESSAGE);
+
+        } else {
+            JOptionPane.showMessageDialog(this, "No result found", "Result", JOptionPane.INFORMATION_MESSAGE);
+
+        }
     }
 
     private void btn_statistic_clearActionPerformed(java.awt.event.ActionEvent evt) {
@@ -220,7 +275,6 @@ public class Statistic extends javax.swing.JFrame {
         cmbx_statistic_category.setSelectedItem(null);
 
     }
-
 
 
     private void rbtn_statistic_total_expensesActionPerformed(java.awt.event.ActionEvent evt) {
