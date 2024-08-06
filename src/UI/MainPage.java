@@ -1331,6 +1331,7 @@ public class MainPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         List<Expenses> expenses = dbFunction.getExpensesSorted("asc");
         updateTable(expenses);
+
     }
 
 

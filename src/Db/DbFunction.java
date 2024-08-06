@@ -40,6 +40,12 @@ public class DbFunction implements IDbFunction {
     private static final String get_statistics_between_dates_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ?";
     private static final String get_statistics_between_dates_category_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
     private static final String get_statistics_expenses_between_dates_by_category_query = "SELECT * FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+    private static final String get_statistics_total_expenses_between_dates_by_category = "SELECT SUM(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+    private static final String get_statistics_avg_expenses_between_dates_by_category = "SELECT AVG(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+    private static final String get_statistics_max_expenses_between_dates_by_category = "SELECT MAX(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+    private static final String get_statistics_min_expenses_between_dates_by_category = "SELECT MIN(cost) FROM expenses WHERE person_id = ? AND date BETWEEN ? AND ? AND category_id = ?";
+
+
 
     //Persons
     private static final String insert_person_query = "INSERT INTO persons (name, e_mail, password, person_type, created_at) VALUES (?, ?, ?, ?, ?)";
@@ -238,6 +244,7 @@ public class DbFunction implements IDbFunction {
         return getStatistics(personId);
 
     }
+
     public Collection<? extends Expenses> getStatisticsExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
         List<Expenses> expensesList = new ArrayList<>();
         conn = DbConnector.getConnection();
@@ -260,9 +267,81 @@ public class DbFunction implements IDbFunction {
             expensesList.add(expense);
         }
         return expensesList;
-
-
     }
+    public Collection<? extends Expenses> getStatisticsTotalExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_total_expenses_between_dates_by_category);
+        ps.setInt(1, personId);
+        ps.setDate(2, date1);
+        ps.setDate(3, date2);
+        ps.setInt(4, categoryType.getId());
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses totalExpenses = new Expenses();
+            totalExpenses.setDescription("Total Expenses Between Dates");
+            totalExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(totalExpenses);
+        }
+        return expensesList;
+    }
+
+    public Collection<? extends Expenses> getStatisticsAvgExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_avg_expenses_between_dates_by_category);
+        ps.setInt(1, personId);
+        ps.setDate(2, date1);
+        ps.setDate(3, date2);
+        ps.setInt(4, categoryType.getId());
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses avgExpenses = new Expenses();
+            avgExpenses.setDescription("Average Expenses Between Dates");
+            avgExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(avgExpenses);
+        }
+        return expensesList;
+    }
+
+    public Collection<? extends Expenses> getStatisticsMaxExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_max_expenses_between_dates_by_category);
+        ps.setInt(1, personId);
+        ps.setDate(2, date1);
+        ps.setDate(3, date2);
+        ps.setInt(4, categoryType.getId());
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses maxExpenses = new Expenses();
+            maxExpenses.setDescription("Max Expenses Between Dates");
+            maxExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(maxExpenses);
+        }
+        return expensesList;
+    }
+
+    public Collection<? extends Expenses> getStatisticsMinExpensesBetweenDatesByCategory(int personId, Date date1, Date date2, @NotNull ECategoryType categoryType) throws DbConnectException, SQLException {
+        List<Expenses> expensesList = new ArrayList<>();
+        conn = DbConnector.getConnection();
+        ps = conn.prepareStatement(get_statistics_min_expenses_between_dates_by_category);
+        ps.setInt(1, personId);
+        ps.setDate(2, date1);
+        ps.setDate(3, date2);
+        ps.setInt(4, categoryType.getId());
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            Expenses minExpenses = new Expenses();
+            minExpenses.setDescription("Min Expenses Between Dates");
+            minExpenses.setCost(rs.getBigDecimal(1));
+            expensesList.add(minExpenses);
+        }
+        return expensesList;
+    }
+
+
+
 
 
     public List<Expenses> getTotalExpenses(int personId) throws DbConnectException, SQLException {
@@ -1125,11 +1204,20 @@ public class DbFunction implements IDbFunction {
         List<Expenses> expenses = new ArrayList<>();
         conn = DbConnector.getConnection();
         ps = conn.prepareStatement(search_expenses_query);
+
+        int categoryId;
+        try {
+            ECategoryType categoryType = ECategoryType.valueOf(search.toUpperCase());
+            categoryId = categoryType.getId();
+        } catch (IllegalArgumentException e) {
+            categoryId = -1;
+        }
+
         ps.setString(1, "%" + search + "%");
         ps.setString(2, "%" + search + "%");
         ps.setString(3, "%" + search + "%");
         ps.setString(4, "%" + search + "%");
-        ps.setString(5, "%" + search + "%");
+        ps.setInt(5, categoryId);
         ps.setString(6, "%" + search + "%");
 
         rs = ps.executeQuery();
@@ -1145,6 +1233,7 @@ public class DbFunction implements IDbFunction {
             expense.setDate(rs.getDate("date"));
             expenses.add(expense);
         }
+
         if (rs != null) {
             try {
                 rs.close();
@@ -1167,7 +1256,6 @@ public class DbFunction implements IDbFunction {
             }
         }
         return expenses;
-
     }
 
     public List<Expenses> getExpensesSorted(String sortOrder) {
@@ -1212,6 +1300,5 @@ public class DbFunction implements IDbFunction {
     }
 
 }
-
 
 

@@ -197,7 +197,6 @@ public class LoginPage extends javax.swing.JFrame {
                 mainPage.setVisible(true);
                 this.dispose();
 
-
             } else {
                 JOptionPane.showMessageDialog(null, "Login Failed.Try Again");
             }

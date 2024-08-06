@@ -222,34 +222,61 @@ public class Statistic extends javax.swing.JFrame {
 
         String category = cmbx_statistic_category.getSelectedItem() == null ? null : cmbx_statistic_category.getSelectedItem().toString();
 
-        if (category != null){
-            ECategoryType categoryType = ECategoryType.valueOf(category);
-            try {
-                expensesList.addAll(dbFunctions.getStatisticsExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
-            } catch (DbConnectException | SQLException e) {
-                e.printStackTrace();
-            }
-
+        // Seçilen butonları tutmak için bir liste kullanıyoruz
+        List<String> selectedButtons = new ArrayList<>();
+        if (rbtn_statistic_total_expenses.isSelected()) {
+            selectedButtons.add("total");
+        }
+        if (rbtn_statistic_avarage_expenses.isSelected()) {
+            selectedButtons.add("average");
+        }
+        if (rbtn_statistic_max_expenses.isSelected()) {
+            selectedButtons.add("max");
+        }
+        if (rbtn_statistic_min_expenses.isSelected()) {
+            selectedButtons.add("min");
         }
 
-
-
-//        try {
-//            if (rbtn_statistic_total_expenses.isSelected()) {
-//                expensesList.addAll(dbFunctions.getStatisticsTotalExpensesBetweenDates(personId, date1, date2));
-//            }
-//            if (rbtn_statistic_avarage_expenses.isSelected()) {
-//                expensesList.addAll(dbFunctions.getStatisticsAvgExpensesBetweenDates(personId, date1, date2));
-//            }
-//            if (rbtn_statistic_max_expenses.isSelected()) {
-//                expensesList.addAll(dbFunctions.getStatisticsMaxExpensesBetweenDates(personId, date1, date2));
-//            }
-//            if (rbtn_statistic_min_expenses.isSelected()) {
-//                expensesList.addAll(dbFunctions.getStatisticsMinExpensesBetweenDates(personId, date1, date2));
-//            }
-//        } catch (DbConnectException | SQLException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            if (category != null) {
+                ECategoryType categoryType = ECategoryType.valueOf(category);
+                for (String selectedButton : selectedButtons) {
+                    switch (selectedButton) {
+                        case "total":
+                            expensesList.addAll(dbFunctions.getStatisticsTotalExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
+                            break;
+                        case "average":
+                            expensesList.addAll(dbFunctions.getStatisticsAvgExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
+                            break;
+                        case "max":
+                            expensesList.addAll(dbFunctions.getStatisticsMaxExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
+                            break;
+                        case "min":
+                            expensesList.addAll(dbFunctions.getStatisticsMinExpensesBetweenDatesByCategory(personId, date1, date2, categoryType));
+                            break;
+                    }
+                }
+            } else {
+                for (String selectedButton : selectedButtons) {
+                    switch (selectedButton) {
+                        case "total":
+                            expensesList.addAll(dbFunctions.getStatisticsTotalExpensesBetweenDates(personId, date1, date2));
+                            break;
+                        case "average":
+                            expensesList.addAll(dbFunctions.getStatisticsAvgExpensesBetweenDates(personId, date1, date2));
+                            break;
+                        case "max":
+                            expensesList.addAll(dbFunctions.getStatisticsMaxExpensesBetweenDates(personId, date1, date2));
+                            break;
+                        case "min":
+                            expensesList.addAll(dbFunctions.getStatisticsMinExpensesBetweenDates(personId, date1, date2));
+                            break;
+                    }
+                }
+            }
+        } catch (DbConnectException | SQLException e) {
+            e.printStackTrace();
+        }
 
         if (!expensesList.isEmpty()) {
             StringBuilder result = new StringBuilder();
@@ -257,10 +284,8 @@ public class Statistic extends javax.swing.JFrame {
                 result.append(expense.getDescription()).append(": ").append(expense.getCost()).append("\n");
             }
             JOptionPane.showMessageDialog(this, result.toString(), "Result", JOptionPane.INFORMATION_MESSAGE);
-
         } else {
             JOptionPane.showMessageDialog(this, "No result found", "Result", JOptionPane.INFORMATION_MESSAGE);
-
         }
     }
 
